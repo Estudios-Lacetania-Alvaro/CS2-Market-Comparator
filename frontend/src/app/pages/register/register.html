@@ -1,0 +1,18 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+<form action="">
+    <div class="mb-3">
+        <label class="from-label">Username</label>
+        <input type="text" class="from-control" [(ngModel)]="username" required>
+    </div>
+    <div class="mb-3">
+        <label class="from-label">Email</label>
+        <input type="email" class="from-control" [(ngModel)]="email" placeholder="email@exemple.com" required>
+    </div>
+    <div class="mb-3">
+        <label class="from-label">Password</label>
+        <input type="password" class="from-control" [(ngModel)]="password" required>
+    </div>
+    <button type="submit" class="btn btn-info">Register</button>
+    <p>You have an account? <a href="">Login</a></p>
+</form>
