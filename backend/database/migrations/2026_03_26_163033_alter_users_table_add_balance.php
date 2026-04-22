@@ -6,19 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        //
+        Schema::table('users', function (Blueprint $table) {
+            // Afegim el capital disponible de l'usuari amb valor per defecte 0
+            $table->decimal('balance', 10, 2)->default(0.00)->after('password');
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        //
+        Schema::table('users', function (Blueprint $table) {
+            // Eliminem el camp si desfem la migració
+            $table->dropColumn('balance');
+        });
     }
 };
+
+?>
