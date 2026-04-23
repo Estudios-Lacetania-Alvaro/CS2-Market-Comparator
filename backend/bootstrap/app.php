@@ -12,7 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Configurem el CORS per permetre peticions des de l'Angular
+        $middleware->validateCsrfTokens(except: [
+            'api/*', // Excloem les rutes de la API de la protecció CSRF si cal
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
