@@ -1,14 +1,44 @@
-@import "bootstrap/dist/css/bootstrap.min.css";
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card bg-transparent border-0" style="max-width: 420px; width: 100%;">
+        <div class="card-body p-4 p-md-5" style="background-color: #151e27; border-radius: 8px; border: 1px solid #233140; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <h3 class="text-cyan mb-1 fw-bold font-monospace" style="letter-spacing: 1px;">TERMINAL_ACCESS</h3>
+            <p class="text-muted mb-4 small">Initialize secure session to SkinArbitrage Engine.</p>
 
-<form action="">
-    <div class="mb-3">
-        <label class="from-label">Email</label>
-        <input type="email" class="from-control" [(ngModel)]="email" placeholder="email@exemple.com" required>
+            <form (ngSubmit)="login()">
+                <div class="mb-3">
+                    <label class="form-label">Identifier</label>
+                    <input type="email" class="form-control dark-input" name="email" [(ngModel)]="email" placeholder="@ email@provider.com" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label d-flex justify-content-between">
+                        <span>Crypt-Key</span>
+                        <a href="#" class="text-cyan text-decoration-none" style="font-size: 0.70rem;">FORGOT_PWD?</a>
+                    </label>
+                    <input type="password" class="form-control dark-input" name="password" [(ngModel)]="password" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="btn btn-cyan w-100 mb-3 text-uppercase font-monospace">SIGN_IN &rarr;]</button>
+                
+                <div class="d-flex align-items-center mb-3">
+                    <hr class="flex-grow-1 border-secondary">
+                    <span class="mx-3 text-muted font-monospace" style="font-size: 0.65rem;">EXTERNAL_OAUTH</span>
+                    <hr class="flex-grow-1 border-secondary">
+                </div>
+
+                <button type="button" class="btn btn-dark-outline w-100 mb-4 p-2 font-monospace">
+                   &#127918; SIGN_IN_WITH_STEAM
+                </button>
+
+                <p class="text-center mb-0 font-monospace" style="font-size: 0.75rem;">
+                    <span class="text-muted">NEW_TRADER?</span> 
+                    <a href="/register" class="text-cyan text-decoration-none fw-bold ms-1">ESTABLISH_ACCOUNT</a>
+                </p>
+            </form>
+        </div>
+        <div class="text-center mt-4 text-muted font-monospace" style="font-size: 0.65rem; letter-spacing: 1px;">
+            <span class="mx-3 hover-cyan cursor-pointer">API_DOCS</span>
+            <span class="mx-3 hover-cyan cursor-pointer">SECURITY_PROTOCOL</span>
+            <span class="mx-3 hover-cyan cursor-pointer">SYSTEM_STATUS</span>
+        </div>
     </div>
-    <div>
-        <label class="mb-3">Password</label>
-        <input type="password" class="from-control" [(ngModel)]="password" required>
-    </div>
-    <button type="submit" class="btn btn-info">Login</button>
-    <p>Don't have an account? <a href="">Register</a></p>
-</form>
+</div>
