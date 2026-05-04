@@ -1,0 +1,49 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/home">CSGO Comparator</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/compra" routerLinkActive="active">Compra</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/inventario" routerLinkActive="active">Inventario</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/graficos" routerLinkActive="active">Gráficos</a>
+        </li>
+      </ul>
+      <div class="d-flex align-items-center">
+        @if (isLoggedIn) {
+          <div class="me-4 text-end d-none d-md-block">
+            <span class="d-block">Balance DMarket</span>
+            <span>${{ user?.balance || '0.00' }}</span>
+          </div>
+          
+          <div class="dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img [src]="'https://ui-avatars.com/api/?name=' + (user?.name || 'User')" alt="User" width="30" height="30" class="rounded-circle me-1">
+              {{ user?.name || 'Mi Perfil' }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" routerLink="/profile">Perfil</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" (click)="logout()">Cerrar Sesión</a></li>
+            </ul>
+          </div>
+        } @else {
+          <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary" routerLink="/login">Login</a>
+            <a class="btn btn-primary" routerLink="/register">Register</a>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</nav>

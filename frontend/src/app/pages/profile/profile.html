@@ -1,11 +1,64 @@
 <div class="container mt-5">
-    <h2>User Profile</h2>
-    
-    <div>
-        <p><strong>Username:</strong> {{ user.name }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
-        <p><strong>Balance:</strong> ${{ user.balance}}</p>
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-4">
+            <div class="card dark-card text-center shadow-lg border-0 h-100">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <div class="position-relative mb-4">
+                        <img [src]="profileImage" alt="Profile Picture" class="rounded-circle profile-img-large border border-cyan shadow">
+                        <button class="btn btn-sm btn-cyan position-absolute bottom-0 end-0 rounded-circle p-2" title="Cambiar Foto">
+                            <i class="bi bi-camera-fill"></i>
+                        </button>
+                    </div>
+                    <h3 class="fw-bold text-light mb-1">{{ user?.name || 'Usuario' }}</h3>
+                    <p class="text-secondary mb-4">{{ user?.email || 'email@ejemplo.com' }}</p>
 
-        <button class="btn btn-danger mt-3" (click)="logout()">Logout</button>
+                    <div class="w-100 p-3 rounded dmarket-balance-card mb-3">
+                        <p class="text-uppercase text-secondary small fw-bold mb-1">Balance DMarket</p>
+                        <h2 class="text-success fw-bold mb-0">${{ user?.balance }}</h2>
+                    </div>
+
+                    <button class="btn btn-dark-outline w-100 mt-auto" (click)="logout()">
+                        <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8 mb-4">
+            <div class="card dark-card shadow-lg border-0 h-100">
+                <div class="card-header border-bottom border-secondary bg-transparent py-3">
+                    <h5 class="mb-0 text-cyan"><i class="bi bi-person-lines-fill me-2"></i> Información Personal</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nombre de Usuario</label>
+                                <input type="text" class="form-control dark-input" [value]="user?.name" readonly>
+                            </div>
+                            <div class="col-md-6 mt-3 mt-md-0">
+                                <label class="form-label">Correo Electrónico</label>
+                                <input type="email" class="form-control dark-input" [value]="user?.email" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Steam Trade URL</label>
+                                <input type="text" class="form-control dark-input" placeholder="https://steamcommunity.com/tradeoffer/new/?partner=...">
+                            </div>
+                            <div class="col-md-6 mt-3 mt-md-0">
+                                <label class="form-label">DMarket API Key</label>
+                                <input type="password" class="form-control dark-input" placeholder="••••••••••••••••">
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-cyan px-4">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
