@@ -11,15 +11,19 @@ class DatabaseSeeder extends Seeder
     use WithoutModelEvents;
 
     /**
-     * Seed the application's database.
+     * Execució dels seeders de l'aplicació.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // Generació d'un usuari de prova per a l'entorn de desenvolupament
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+        ]);
+
+        // Crida als seeders específics per a la càrrega de dades de negoci
+        $this->call([
+            SkinSeeder::class, // Càrrega del catàleg inicial de skins
         ]);
     }
 }
