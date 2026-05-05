@@ -23,6 +23,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'profile_photo' => 'https://picsum.photos/200',
         ]);
 
         // Generació del token de sessió de seguretat amb Sanctum 
