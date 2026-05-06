@@ -1,3 +1,128 @@
-<div>
-    <h1>Página Principal</h1>
+<div class="custom-container">
+    
+    @if (loading()) {
+        <div style="padding: 4rem; text-align: center; color: #e3b341; font-family: monospace;">
+            Loading data from API...
+        </div>
+    } @else {
+        
+        <div class="top-grid">
+            
+            <!-- LATEST RESULTS -->
+            <div class="pro-panel">
+                <div class="panel-header">
+                    <div class="panel-title text-uppercase">Latest Results</div>
+                </div>
+                
+                <div>
+                    <div *ngFor="let match of matches()" class="match-item">
+                        <div class="match-meta text-uppercase">
+                            <span>{{ match.event }}</span>
+                            <span>{{ match.date }}</span>
+                        </div>
+                        
+                        <div class="match-body">
+                            <div class="team left">
+                                <div class="team-name text-uppercase">{{ match.team1.name }}</div>
+                                <div class="team-rank font-mono">#{{ match.team1.rank || '?' }}</div>
+                            </div>
+                            
+                            <div class="score-area">
+                                <div class="score-main font-mono">
+                                    <span [class.text-green]="match.team1.score > match.team2.score" [class.text-red]="match.team1.score < match.team2.score">
+                                        {{ match.team1.score }}
+                                    </span>
+                                    <span class="score-colon">:</span>
+                                    <span [class.text-green]="match.team2.score > match.team1.score" [class.text-red]="match.team2.score < match.team1.score">
+                                        {{ match.team2.score }}
+                                    </span>
+                                </div>
+                                <div class="score-bestof text-uppercase">Best of 3</div>
+                            </div>
+                            
+                            <div class="team right">
+                                <div class="team-name text-uppercase">{{ match.team2.name }}</div>
+                                <div class="team-rank font-mono">#{{ match.team2.rank || '?' }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="maps-container">
+                            <div *ngFor="let m of (match.maps || [])" class="map-pill text-uppercase">
+                                <span class="map-name">{{ m.name }}</span>
+                                <span [class.text-green]="m.team1_score > m.team2_score" [class.text-red]="m.team1_score < m.team2_score">{{ m.team1_score }}</span>
+                                <span class="map-dash">-</span>
+                                <span [class.text-green]="m.team2_score > m.team1_score" [class.text-red]="m.team2_score < m.team1_score">{{ m.team2_score }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- WORLD RANKINGS -->
+            <div class="pro-panel">
+                <div class="panel-header">
+                    <div class="panel-title text-uppercase">World Rankings</div>
+                    <div class="panel-api font-mono">GET /rankings</div>
+                </div>
+                
+                <div class="ranking-list">
+                    <div *ngFor="let team of rankings()" class="ranking-item">
+                        <div class="rank-pos font-mono">{{ team.rank }}</div>
+                        <div class="rank-team text-uppercase">{{ team.name }}</div>
+                        <div class="rank-stats">
+                            <div class="rank-points font-mono">{{ team.points }}</div>
+                            <div class="rank-diff font-mono" [ngClass]="{'text-green': team.rank_diff >= 0, 'text-red': team.rank_diff < 0}">
+                                {{ team.rank_diff >= 0 ? '+' : '' }}{{ team.rank_diff }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- TOP PLAYERS -->
+        <div class="pro-panel">
+            <div class="panel-header">
+                <div class="panel-title text-uppercase">Top Players</div>
+            </div>
+            
+            <div class="players-table-wrapper">
+                <table class="players-table">
+                    <thead>
+                        <tr class="text-uppercase font-mono">
+                            <th style="width: 40px;">#</th>
+                            <th>Player</th>
+                            <th>Maps</th>
+                            <th>K/D</th>
+                            <th>Swing%</th>
+                            <th>ADR</th>
+                            <th>KAST%</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let p of players(); let i = index" [class.top-3]="i < 3">
+                            <td class="text-orange">{{ i + 1 }}</td>
+                            <td class="text-uppercase">{{ p.name }}</td>
+                            <td>{{ p.N || 0 }}</td>
+                            <td>{{ (p.k / p.d) | number:'1.2-2' }}</td>
+                            <td>{{ p.swing }}%</td>
+                            <td>{{ p.adr }}</td>
+                            <td>{{ p.kast }}%</td>
+                            <td>
+                                <div class="rating-col">
+                                    <div class="rating-bar-wrapper">
+                                        <div class="rating-bar-inner" [style.width.%]="(p.rating / 1.6) * 100" [style.background-color]="p.rating >= 1.30 ? '#3fb950' : '#e3b341'"></div>
+                                    </div>
+                                    <span [style.color]="p.rating >= 1.30 ? '#3fb950' : '#e3b341'">{{ p.rating }}</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+    }
 </div>
