@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // S'afegeix el camp per a la URL de la foto, opcional per defecte
-            $table->string('profile_photo')->nullable()->after('email');
+            $table->string('profile_photo')->nullable();
         });
     }
 
@@ -23,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->dropColumn('profile_photo');
         });
     }
 };

@@ -4,8 +4,9 @@
             <div class="card dark-card text-center shadow-lg border-0 h-100">
                 <div class="card-body d-flex flex-column align-items-center justify-content-center">
                     <div class="position-relative mb-4">
-                        <img [src]="profileImage" alt="Profile Picture" class="rounded-circle profile-img-large border border-cyan shadow">
-                        <button class="btn btn-sm btn-cyan position-absolute bottom-0 end-0 rounded-circle p-2" title="Cambiar Foto">
+                        <img [src]="profileImage" alt="Profile Picture" class="rounded-circle profile-img-large border border-cyan shadow" style="object-fit: cover; width: 150px; height: 150px;">
+                        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;" accept="image/*">
+                        <button class="btn btn-sm btn-cyan position-absolute bottom-0 end-0 rounded-circle p-2" title="Cambiar Foto" (click)="fileInput.click()">
                             <i class="bi bi-camera-fill"></i>
                         </button>
                     </div>
@@ -14,7 +15,7 @@
 
                     <div class="w-100 p-3 rounded dmarket-balance-card mb-3">
                         <p class="text-uppercase text-secondary small fw-bold mb-1">Balance DMarket</p>
-                        <h2 class="text-success fw-bold mb-0">${{ user?.balance }}</h2>
+                        <h2 class="text-success fw-bold mb-0">${{ user?.balance ?? '0.00' }}</h2>
                     </div>
 
                     <button class="btn btn-dark-outline w-100 mt-auto" (click)="logout()">
@@ -34,11 +35,11 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Nombre de Usuario</label>
-                                <input type="text" class="form-control dark-input" [value]="user?.name" readonly>
+                                <input type="text" class="form-control dark-input" [value]="user?.name || ''" readonly>
                             </div>
                             <div class="col-md-6 mt-3 mt-md-0">
                                 <label class="form-label">Correo Electrónico</label>
-                                <input type="email" class="form-control dark-input" [value]="user?.email" readonly>
+                                <input type="email" class="form-control dark-input" [value]="user?.email || ''" readonly>
                             </div>
                         </div>
                         

@@ -12,28 +12,52 @@ import { Router } from '@angular/router';
 })
 export class Profile implements OnInit {
   user: any = {};
-  profileImage: string = "https://ui-avatars.com/api/?name=Usuario&background=4bd5ee&color=0b1116&size=150";
+  profileImage: string = "";
 
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
     this.authService.getUser().subscribe({
-      next: (data) => {
+      next: (data: any) => {
         if(data) {
-          this.user = data;
-          this.profileImage = `https://ui-avatars.com/api/?name=${this.user.name}&background=4bd5ee&color=0b1116&size=150`;
+          // Extracción correcta del usuario
+          this.user = data.user ? data.user : data;
+          
+          // Usamos la foto que venga de la base de datos
+          if (this.user?.profile_photo) {
+            this.profileImage = this.user.profile_photo;
+          }
         }
       },
       error: (err) => {
         console.error('Error fetching user', err);
-        // Si el token no es válido o ha expirado, forzamos login
         this.router.navigate(['/login']);
       }
     });
   }
 
   logout() {
-    localStorage.removeItem('token');
-    this.router.navigate(['/login']);
+    this.authService.logout().subscribe({
+      next: () => {
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error('Logout error', err);
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+      }
+    });
+  }
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.profileImage = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
   }
 }

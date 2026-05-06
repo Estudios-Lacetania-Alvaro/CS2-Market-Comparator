@@ -23,4 +23,11 @@ export class AuthService {
       headers: { Authorization: `Bearer ${token}` }
     });
   }
+
+  logout(){
+    const token = localStorage.getItem('token');
+    return this.http.post(`${this.apiUrl}/logout`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  }
 }

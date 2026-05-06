@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         // Configurem el CORS per permetre peticions des de l'Angular
-        $middleware->validateCsrfTokens(except: [
+        $middleware->validateCsrfTokens(except: [   
             'api/*', // Excloem les rutes de la API de la protecció CSRF si cal
         ]);
     })

@@ -19,7 +19,7 @@ class SyncMarketPrices extends Command
     {
         // Selecció de skins de la base de dades ordenades per data d'actualització
         // Es prioritzen els registres més antics o aquells que no han estat processats (null)
-        $targetSkins = Skin::orderBy('last_updated', 'asc')->limit(10)->get();
+        $targetSkins = Skin::orderBy('last_updated', 'asc')->limit(50)->get();
 
         $this->info("Iniciant sincronització de " . $targetSkins->count() . " skins des de la BD...");
 

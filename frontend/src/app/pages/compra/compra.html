@@ -1,0 +1,63 @@
+<div class="container mt-4">
+  <h2>Mercado de Skins</h2>
+  
+  <div *ngIf="loading" class="text-center mt-5">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading" class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mt-2">
+    <div class="col" *ngFor="let skin of skins">
+      <div class="card h-100 shadow-sm">
+        <div class="p-3 bg-light d-flex justify-content-center align-items-center" style="height: 200px;">
+          <img [src]="skin.image" class="img-fluid" [alt]="skin.name" style="max-height: 100%;">
+        </div>
+        <div class="card-body">
+          <h6 class="card-title text-truncate" [title]="skin.name">{{ skin.name }}</h6>
+          
+          <ng-container *ngIf="skin.steam_price || skin.dmarket_price; else noData">
+            <div class="d-flex justify-content-between mb-2 small">
+              <div>
+                <span class="text-muted d-block">Steam</span>
+                <strong>${{ skin.steam_price }}</strong>
+              </div>
+              <div class="text-end">
+                <span class="text-muted d-block">DMarket</span>
+                <strong>${{ skin.dmarket_price }}</strong>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <span class="badge w-100" 
+                [ngClass]="{
+                  'bg-success': skin.recommendation === 'Oportunitat rentable',
+                  'bg-warning text-dark': skin.recommendation === 'Marge baix',
+                  'bg-danger': skin.recommendation === 'No recomanable',
+                  'bg-secondary': !skin.recommendation
+                }">
+                {{ skin.recommendation || 'Sense dades' }}
+              </span>
+            </div>
+            <p class="text-success fw-bold mb-0 text-center small" *ngIf="skin.net_profit_usd > 0">
+              Beneficio est.: ${{ skin.net_profit_usd }}
+            </p>
+            <p class="text-success fw-bold mb-0 text-center small" *ngIf="skin.profit_margin_percent > 0">
+              ROI: {{ skin.profit_margin_percent }}%
+            </p>
+          </ng-container>
+
+          <ng-template #noData>
+            <div class="text-center text-muted py-4 small">
+              <i class="bi bi-info-circle fs-4 mb-2 d-block"></i>
+              Precios no disponibles
+            </div>
+          </ng-template>
+        </div>
+        <div class="card-footer bg-transparent border-top-0 pt-0">
+          <button class="btn btn-primary w-100 btn-sm" [disabled]="!skin.steam_price && !skin.dmarket_price">Comprar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
