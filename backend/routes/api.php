@@ -24,6 +24,7 @@ Route::post('/login', [AuthController::class, 'login']);
 // Es requereix l'enviament d'un token vàlid a la capçalera de la petició
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
+    Route::put('/user', [AuthController::class, 'updateProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 

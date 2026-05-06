@@ -79,4 +79,26 @@ class AuthController extends Controller
             'message' => 'Sessió tancada correctament'
         ], 200);
     }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'profile_photo' => 'nullable|string',
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'profile_photo' => $request->profile_photo,
+        ]);
+
+        return response()->json([
+            'message' => 'Perfil actualitzat correctament',
+            'user' => $user
+        ], 200);
+    }
 }

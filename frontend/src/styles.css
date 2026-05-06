@@ -60,3 +60,23 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
 }
+
+/* Cards personalitzades */
+.dark-card {
+    background-color: #121a22 !important;
+    border: 1px solid #233140 !important;
+}
+
+.dmarket-balance-card {
+    background-color: #1a232c;
+    border: 1px solid #233140;
+}
+
+.border-cyan {
+    border-color: #4bd5ee !important;
+}
+
+.profile-img-large {
+    object-fit: cover;
+    border-width: 3px !important;
+}

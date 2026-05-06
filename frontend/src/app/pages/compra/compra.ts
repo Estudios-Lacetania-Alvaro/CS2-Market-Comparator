@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MarketService } from '../../services/market.service';
 
@@ -10,8 +10,8 @@ import { MarketService } from '../../services/market.service';
   styleUrls: ['./compra.css']
 })
 export class Compra implements OnInit {
-  skins: any[] = [];
-  loading = true;
+  skins = signal<any[]>([]);
+  loading = signal<boolean>(true);
 
   constructor(private marketService: MarketService) {}
 
@@ -19,12 +19,12 @@ export class Compra implements OnInit {
     this.marketService.getMarketSkins().subscribe({
       next: (response) => {
         if (response.success) {
-          this.skins = response.data;
+          this.skins.set(response.data);
         }
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
