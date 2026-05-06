@@ -16,4 +16,8 @@ class Skin extends Model
         'volume',
         'last_updated'
     ];
+
+    public function dmarketItems() {
+        return $this->hasMany(MarketItem::class);
+    }
 }

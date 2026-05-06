@@ -31,3 +31,4 @@ Route::middleware('auth:sanctum')->group(function () {
 // Aquestes rutes proporcionen la informació necessària per a la interfície del frontend
 Route::get('/market/skins', [MarketController::class, 'getMarketSkins']);
 Route::get('/market/skins/{id}', [MarketController::class, 'getSkinDetail']);
+Route::get('/market/dmarket-items', [MarketController::class, 'getDMarketItems']);
