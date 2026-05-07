@@ -1,20 +1,38 @@
 @if (loading()) {
   <div class="flex-grow w-full max-w-[1440px] mx-auto p-lg flex flex-col justify-center items-center mt-sm min-h-[50vh]">
-    <div class="text-primary font-data-mono text-headline-md animate-pulse">Loading API Data...</div>
+    <div class="text-primary font-data-mono text-headline-md animate-pulse">Loading...</div>
   </div>
 } @else {
   <main class="flex-grow w-full max-w-[1440px] mx-auto p-lg flex flex-col gap-lg mt-sm">
-    <section class="border border-outline-variant bg-surface-container-low p-lg flex flex-col lg:flex-row gap-xl items-center justify-between">
+    <!-- 1. Mercado Section -->
+    <section class="border border-outline-variant bg-surface-container-low p-lg flex flex-col lg:flex-row gap-xl justify-between lg:items-start">
       <div class="flex-1 flex flex-col">
         <div class="mb-md">
           <span class="text-label-caps font-label-caps text-primary">PLATFORM INTRODUCTION</span>
-          <h2 class="text-display-lg font-display-lg text-on-surface mt-xs tracking-tight">MARKET</h2>
+          <h2 class="text-display-lg font-display-lg text-on-surface mt-xs tracking-tight uppercase">MARKET: SKIN ARBITRAGE & PROFIT MAXIMIZATION</h2>
         </div>
         <p class="text-body-base text-on-surface-variant leading-relaxed max-w-2xl">
-          Unlock advanced skin arbitrage opportunities with our real-time market data. Monitor price disparities across multiple platforms to identify and execute profitable trades instantly.
+          Leverage our industrial-grade data pipeline to identify high-margin arbitrage opportunities across global skin marketplaces. We simplify complex market dynamics into actionable data, allowing you to maximize net ROI with every trade.
         </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-md mt-lg">
+          <div class="border border-outline-variant p-md bg-surface-bright">
+            <span class="material-symbols-outlined text-primary mb-xs">compare_arrows</span>
+            <h3 class="text-label-caps font-label-caps text-on-surface mb-1">REAL-TIME COMPARISON</h3>
+            <p class="text-[12px] text-on-surface-variant leading-tight">Instant price parity checks between DMarket and Steam</p>
+          </div>
+          <div class="border border-outline-variant p-md bg-surface-bright">
+            <span class="material-symbols-outlined text-primary mb-xs">calculate</span>
+            <h3 class="text-label-caps font-label-caps text-on-surface mb-1">FEE AUTOMATION</h3>
+            <p class="text-[12px] text-on-surface-variant leading-tight">Automatic 10% DMarket fee deduction for accurate net profit forecasting.</p>
+          </div>
+          <div class="border border-outline-variant p-md bg-surface-bright">
+            <span class="material-symbols-outlined text-primary mb-xs">speed</span>
+            <h3 class="text-label-caps font-label-caps text-on-surface mb-1">LATENCY MONITORING</h3>
+            <p class="text-[12px] text-on-surface-variant leading-tight">Data refresh rates optimized to update as quickly as possible.</p>
+          </div>
+        </div>
       </div>
-      <div class="flex-1 flex flex-col w-full gap-md">
+      <div class="flex-1 flex flex-col w-full gap-md lg:max-w-xs">
         <div class="grid grid-cols-2 gap-xs">
           <div class="border border-outline-variant p-sm bg-surface-bright">
             <span class="text-label-caps font-label-caps text-on-surface-variant block mb-1">MARKET GAP</span>
@@ -34,7 +52,7 @@
 
     <!-- 2. Separator -->
     <div class="flex items-center gap-md w-full">
-      <h2 class="text-headline-md font-headline-md text-on-surface whitespace-nowrap">LATEST COMPETITIVE UPDATES</h2>
+      <h2 class="text-headline-md font-headline-md text-on-surface whitespace-nowrap uppercase">LATEST COMPETITIVE UPDATES</h2>
       <div class="h-px bg-outline-variant w-full"></div>
     </div>
 
@@ -43,46 +61,48 @@
       
       <!-- Left Column: Latest Results (8 cols) -->
       <div class="lg:col-span-8 flex flex-col gap-gutter bg-outline-variant">
-        <!-- Latest Results -->
         <section class="bg-surface-container-lowest flex flex-col h-full border border-outline-variant">
           <div class="p-xs border-b border-outline-variant flex justify-between items-center bg-surface-container">
             <h2 class="text-label-caps font-label-caps text-on-surface">LATEST RESULTS</h2>
             <span class="text-label-caps font-label-caps text-on-surface-variant">UPDATED EVERY HOUR</span>
           </div>
-          <div class="flex flex-col">
-            <!-- Match loop -->
-            <div *ngFor="let match of matches()" class="p-md border-b border-outline-variant hover:bg-surface-bright transition-colors duration-150 group last:border-b-0">
+          <div class="flex flex-col gap-sm p-sm bg-surface-bright">
+            <div *ngFor="let match of matches()" class="p-md border border-outline-variant bg-surface-container-lowest hover:bg-surface-bright transition-colors duration-150 group shadow-sm">
               <div class="flex justify-between text-label-caps font-label-caps text-on-surface-variant mb-sm">
-                <span>{{ match.event | uppercase }}</span>
-                <span>{{ match.date | uppercase }}</span>
+                <span class="uppercase">{{ match.event }}</span>
+                <span class="uppercase">{{ match.date }}</span>
               </div>
-              <div class="flex items-center justify-between">
+              
+              <!-- Main Row: Teams & Score -->
+              <div class="flex items-center justify-between mb-sm">
                 <div class="flex items-center gap-md w-[40%]">
                   <span class="text-data-mono font-data-mono text-on-surface-variant w-6">#{{ match.team1.rank || '?' }}</span>
                   <span class="text-headline-md font-headline-md text-on-surface uppercase">{{ match.team1.name }}</span>
                 </div>
-                <div class="flex flex-col items-center w-[20%]">
+                
+                <div class="flex items-center justify-center gap-sm w-[20%]">
                   <span class="text-display-lg font-display-lg leading-none" [ngClass]="match.team1.score > match.team2.score ? 'text-primary' : 'text-on-surface opacity-50'">{{ match.team1.score }}</span>
-                  <span class="text-label-caps font-label-caps text-on-surface-variant mt-1">
-                    MAPS: 
-                    <span *ngFor="let m of match.maps; let last = last">
-                      {{ m.name | uppercase }} ({{ m.team1_score }}-{{ m.team2_score }}){{ !last ? ', ' : '' }}
-                    </span>
-                  </span>
-                </div>
-                <div class="flex flex-col items-center w-[10%]">
                   <span class="text-data-mono font-data-mono text-on-surface-variant">:</span>
-                </div>
-                <div class="flex flex-col items-center w-[20%]">
                   <span class="text-display-lg font-display-lg leading-none" [ngClass]="match.team2.score > match.team1.score ? 'text-primary' : 'text-on-surface opacity-50'">{{ match.team2.score }}</span>
                 </div>
+                
                 <div class="flex items-center justify-end gap-md w-[40%]">
-                  <span class="text-headline-md font-headline-md text-on-surface opacity-50 uppercase">{{ match.team2.name }}</span>
+                  <span class="text-headline-md font-headline-md text-on-surface uppercase" [ngClass]="match.team2.score > match.team1.score ? 'opacity-100' : 'opacity-50'">{{ match.team2.name }}</span>
                   <span class="text-data-mono font-data-mono text-on-surface-variant w-6 text-right">#{{ match.team2.rank || '?' }}</span>
                 </div>
               </div>
+
+              <!-- Maps Row (Horizontal) -->
+              <div class="flex justify-center border-t border-outline-variant/30 pt-xs mt-xs">
+                <div class="flex flex-wrap justify-center gap-x-md text-label-caps font-label-caps text-on-surface-variant text-[10px] tracking-widest uppercase">
+                  <span *ngFor="let m of match.maps; let last = last" class="flex items-center gap-1">
+                    <span class="text-on-surface font-bold">{{ m.name }}</span>
+                    <span class="opacity-70">({{ m.team1_score }}-{{ m.team2_score }})</span>
+                    <span *ngIf="!last" class="ml-md text-outline-variant opacity-50">•</span>
+                  </span>
+                </div>
+              </div>
             </div>
-            <!-- End Match loop -->
           </div>
         </section>
       </div>
@@ -97,16 +117,14 @@
           <div class="flex-grow overflow-y-auto">
             <table class="w-full text-left border-collapse">
               <tbody class="text-data-mono font-data-mono">
-                <!-- Ranking loop -->
                 <tr *ngFor="let team of rankings(); let even = even" class="border-b border-outline-variant group hover:bg-[#F0FFF4] transition-colors" [ngClass]="even ? 'bg-surface-container-lowest' : 'bg-surface-bright'">
-                  <td class="p-xs w-8 text-center text-on-surface-variant border-r border-outline-variant">{{ team.rank }}</td>
-                  <td class="p-xs font-semibold text-on-surface border-r border-outline-variant uppercase">{{ team.name }}</td>
-                  <td class="p-xs text-right border-r border-outline-variant">{{ team.points }}</td>
-                  <td class="p-xs w-12 text-center" [ngClass]="team.rank_diff > 0 ? 'text-primary' : (team.rank_diff < 0 ? 'text-error' : 'text-on-surface-variant')">
+                  <td class="p-md w-8 text-center text-on-surface-variant border-r border-outline-variant">{{ team.rank }}</td>
+                  <td class="p-md font-semibold text-on-surface border-r border-outline-variant uppercase">{{ team.name }}</td>
+                  <td class="p-md text-right border-r border-outline-variant">{{ team.points }}</td>
+                  <td class="p-md w-12 text-center" [ngClass]="team.rank_diff > 0 ? 'text-primary' : (team.rank_diff < 0 ? 'text-error' : 'text-on-surface-variant')">
                     {{ team.rank_diff > 0 ? '+' : '' }}{{ team.rank_diff === 0 ? '-' : team.rank_diff }}
                   </td>
                 </tr>
-                <!-- End Ranking loop -->
               </tbody>
             </table>
           </div>
@@ -135,10 +153,11 @@
           </tr>
         </thead>
         <tbody class="text-data-mono font-data-mono">
-          <!-- Player loop -->
           <tr *ngFor="let p of players(); let i = index; let even = even" class="border-b border-outline-variant group hover:bg-[#F0FFF4] transition-colors last:border-b-0" [ngClass]="even ? 'bg-surface-container-lowest' : 'bg-surface-bright'">
             <td class="p-xs border-r border-outline-variant text-center text-on-surface-variant">{{ i + 1 }}</td>
-            <td class="p-xs border-r border-outline-variant text-on-surface font-semibold uppercase">{{ p.name }}</td>
+            <td class="p-xs border-r border-outline-variant text-on-surface font-semibold uppercase">
+              {{ p.name }} <span class="text-label-caps text-on-surface-variant ml-1 font-normal" *ngIf="p.team">{{ p.team }}</span>
+            </td>
             <td class="p-xs border-r border-outline-variant text-right">{{ p.N || 0 }}</td>
             <td class="p-xs border-r border-outline-variant text-right" [ngClass]="(p.k / p.d) >= 1.2 ? 'text-primary' : ((p.k / p.d) >= 1.0 ? 'text-on-surface' : 'text-error')">{{ (p.k / p.d) | number:'1.2-2' }}</td>
             <td class="p-xs border-r border-outline-variant text-right" [ngClass]="p.swing > 0 ? 'text-primary' : (p.swing < 0 ? 'text-error' : 'text-on-surface-variant')">{{ p.swing > 0 ? '+' : '' }}{{ p.swing }}%</td>
@@ -153,22 +172,11 @@
               </div>
             </td>
           </tr>
-          <!-- End Player loop -->
         </tbody>
       </table>
     </section>
   </main>
-
-  <!-- Footer -->
-  <footer class="bg-surface-container full-width bottom-0 border-t border-outline-variant mt-auto">
-    <div class="flex flex-col md:flex-row justify-between items-center w-full px-lg py-md gap-sm">
-      <span class="text-label-caps font-label-caps font-bold text-primary">© 2026 CS:ANALYTICS MARKETPLACE - Àlex Navarro / Alvaro Gomez</span>
-      <div class="flex gap-md">
-        <a class="text-on-surface-variant text-label-caps font-label-caps hover:text-primary underline transition-all opacity-100 hover:opacity-80" href="#">API Status</a>
-        <a class="text-on-surface-variant text-label-caps font-label-caps hover:text-primary underline transition-all opacity-100 hover:opacity-80" href="#">Terms</a>
-        <a class="text-on-surface-variant text-label-caps font-label-caps hover:text-primary underline transition-all opacity-100 hover:opacity-80" href="#">Support</a>
-        <a class="text-on-surface-variant text-label-caps font-label-caps hover:text-primary underline transition-all opacity-100 hover:opacity-80" href="#">Market Rules</a>
-      </div>
-    </div>
-  </footer>
 }
+
+
+

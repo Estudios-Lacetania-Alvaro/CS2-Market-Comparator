@@ -46,11 +46,11 @@ export class Profile implements OnInit {
 
     this.authService.updateUser(updateData).subscribe({
       next: (response: any) => {
-        alert('Perfil actualizado correctamente');
+        alert('Profile updated successfully');
       },
       error: (err) => {
         console.error('Error updating profile', err);
-        alert('Error al actualizar el perfil');
+        alert('Error updating profile');
       }
     });
   }
