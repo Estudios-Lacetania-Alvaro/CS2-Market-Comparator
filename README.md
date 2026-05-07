@@ -67,6 +67,7 @@ npm install
 npm start
 
 La aplicación estará disponible en http://localhost:4200.
+```
 
 ## 🤖 Comandos Personalizados (CLI)
 El backend incluye comandos Artisan creados específicamente para la orquestación de datos:
