@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MarketController;
+use App\Http\Controllers\ProStatsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,9 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // Rutas para la escena Pro (Proxy interno para evitar CORS)
-Route::get('/pro/rankings', [App\Http\Controllers\ProStatsController::class, 'getRankings']);
-Route::get('/pro/matches', [App\Http\Controllers\ProStatsController::class, 'getLatestMatches']);
-Route::get('/pro/players', [App\Http\Controllers\ProStatsController::class, 'getPlayerStats']);
+Route::get('/pro/rankings', [ProStatsController::class, 'getRankings']);
+Route::get('/pro/matches', [ProStatsController::class, 'getLatestMatches']);
+Route::get('/pro/players', [ProStatsController::class, 'getPlayerStats']);
 
 // Endpoints destinats a la consulta de dades del comparador de mercat
 // Aquestes rutes proporcionen la informació necessària per a la interfície del frontend

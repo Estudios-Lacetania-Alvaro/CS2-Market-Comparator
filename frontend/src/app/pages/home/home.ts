@@ -1,11 +1,12 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { CsapiService } from '../../services/csapi.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
@@ -28,7 +29,7 @@ export class Home implements OnInit {
     this.csapiService.getRankings().subscribe({
       next: (res) => {
         const data = Array.isArray(res) ? res : (res.rankings || []);
-        this.rankings.set(data.slice(0, 10)); // 10 equipos
+        this.rankings.set(data.slice(0, 10)); 
       },
       error: (err) => console.error('Error loading rankings', err)
     });
@@ -37,7 +38,7 @@ export class Home implements OnInit {
     this.csapiService.getPlayerStats().subscribe({
       next: (res) => {
         const data = Array.isArray(res) ? res : (res.players || []);
-        this.players.set(data.slice(0, 10)); // 10 jugadores
+        this.players.set(data.slice(0, 10)); 
       },
       error: (err) => console.error('Error loading players', err)
     });

@@ -1,128 +1,174 @@
-<div class="custom-container">
-    
-    @if (loading()) {
-        <div style="padding: 4rem; text-align: center; color: #e3b341; font-family: monospace;">
-            Loading data from API...
+@if (loading()) {
+  <div class="flex-grow w-full max-w-[1440px] mx-auto p-lg flex flex-col justify-center items-center mt-sm min-h-[50vh]">
+    <div class="text-primary font-data-mono text-headline-md animate-pulse">Loading API Data...</div>
+  </div>
+} @else {
+  <main class="flex-grow w-full max-w-[1440px] mx-auto p-lg flex flex-col gap-lg mt-sm">
+    <section class="border border-outline-variant bg-surface-container-low p-lg flex flex-col lg:flex-row gap-xl items-center justify-between">
+      <div class="flex-1 flex flex-col">
+        <div class="mb-md">
+          <span class="text-label-caps font-label-caps text-primary">PLATFORM INTRODUCTION</span>
+          <h2 class="text-display-lg font-display-lg text-on-surface mt-xs tracking-tight">MARKET</h2>
         </div>
-    } @else {
-        
-        <div class="top-grid">
-            
-            <!-- LATEST RESULTS -->
-            <div class="pro-panel">
-                <div class="panel-header">
-                    <div class="panel-title text-uppercase">Latest Results</div>
-                </div>
-                
-                <div>
-                    <div *ngFor="let match of matches()" class="match-item">
-                        <div class="match-meta text-uppercase">
-                            <span>{{ match.event }}</span>
-                            <span>{{ match.date }}</span>
-                        </div>
-                        
-                        <div class="match-body">
-                            <div class="team left">
-                                <div class="team-name text-uppercase">{{ match.team1.name }}</div>
-                                <div class="team-rank font-mono">#{{ match.team1.rank || '?' }}</div>
-                            </div>
-                            
-                            <div class="score-area">
-                                <div class="score-main font-mono">
-                                    <span [class.text-green]="match.team1.score > match.team2.score" [class.text-red]="match.team1.score < match.team2.score">
-                                        {{ match.team1.score }}
-                                    </span>
-                                    <span class="score-colon">:</span>
-                                    <span [class.text-green]="match.team2.score > match.team1.score" [class.text-red]="match.team2.score < match.team1.score">
-                                        {{ match.team2.score }}
-                                    </span>
-                                </div>
-                                <div class="score-bestof text-uppercase">Best of 3</div>
-                            </div>
-                            
-                            <div class="team right">
-                                <div class="team-name text-uppercase">{{ match.team2.name }}</div>
-                                <div class="team-rank font-mono">#{{ match.team2.rank || '?' }}</div>
-                            </div>
-                        </div>
-                        
-                        <div class="maps-container">
-                            <div *ngFor="let m of (match.maps || [])" class="map-pill text-uppercase">
-                                <span class="map-name">{{ m.name }}</span>
-                                <span [class.text-green]="m.team1_score > m.team2_score" [class.text-red]="m.team1_score < m.team2_score">{{ m.team1_score }}</span>
-                                <span class="map-dash">-</span>
-                                <span [class.text-green]="m.team2_score > m.team1_score" [class.text-red]="m.team2_score < m.team1_score">{{ m.team2_score }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- WORLD RANKINGS -->
-            <div class="pro-panel">
-                <div class="panel-header">
-                    <div class="panel-title text-uppercase">World Rankings</div>
-                    <div class="panel-api font-mono">GET /rankings</div>
-                </div>
-                
-                <div class="ranking-list">
-                    <div *ngFor="let team of rankings()" class="ranking-item">
-                        <div class="rank-pos font-mono">{{ team.rank }}</div>
-                        <div class="rank-team text-uppercase">{{ team.name }}</div>
-                        <div class="rank-stats">
-                            <div class="rank-points font-mono">{{ team.points }}</div>
-                            <div class="rank-diff font-mono" [ngClass]="{'text-green': team.rank_diff >= 0, 'text-red': team.rank_diff < 0}">
-                                {{ team.rank_diff >= 0 ? '+' : '' }}{{ team.rank_diff }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
+        <p class="text-body-base text-on-surface-variant leading-relaxed max-w-2xl">
+          Unlock advanced skin arbitrage opportunities with our real-time market data. Monitor price disparities across multiple platforms to identify and execute profitable trades instantly.
+        </p>
+      </div>
+      <div class="flex-1 flex flex-col w-full gap-md">
+        <div class="grid grid-cols-2 gap-xs">
+          <div class="border border-outline-variant p-sm bg-surface-bright">
+            <span class="text-label-caps font-label-caps text-on-surface-variant block mb-1">MARKET GAP</span>
+            <span class="text-headline-md font-headline-md text-primary">+14.2% AVG</span>
+          </div>
+          <div class="border border-outline-variant p-sm bg-surface-bright">
+            <span class="text-label-caps font-label-caps text-on-surface-variant block mb-1">LATENCY</span>
+            <span class="text-headline-md font-headline-md text-on-surface">&lt; 50MS</span>
+          </div>
         </div>
-        
-        <!-- TOP PLAYERS -->
-        <div class="pro-panel">
-            <div class="panel-header">
-                <div class="panel-title text-uppercase">Top Players</div>
+        <button class="w-full flex items-center justify-between bg-primary text-on-primary text-label-caps font-label-caps px-md py-sm hover:bg-on-primary-fixed-variant transition-all group" routerLink="/compra">
+          <span>GO TO MARKET</span>
+          <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. Separator -->
+    <div class="flex items-center gap-md w-full">
+      <h2 class="text-headline-md font-headline-md text-on-surface whitespace-nowrap">LATEST COMPETITIVE UPDATES</h2>
+      <div class="h-px bg-outline-variant w-full"></div>
+    </div>
+
+    <!-- 3. Two-Column Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter bg-outline-variant">
+      
+      <!-- Left Column: Latest Results (8 cols) -->
+      <div class="lg:col-span-8 flex flex-col gap-gutter bg-outline-variant">
+        <!-- Latest Results -->
+        <section class="bg-surface-container-lowest flex flex-col h-full border border-outline-variant">
+          <div class="p-xs border-b border-outline-variant flex justify-between items-center bg-surface-container">
+            <h2 class="text-label-caps font-label-caps text-on-surface">LATEST RESULTS</h2>
+            <span class="text-label-caps font-label-caps text-on-surface-variant">UPDATED EVERY HOUR</span>
+          </div>
+          <div class="flex flex-col">
+            <!-- Match loop -->
+            <div *ngFor="let match of matches()" class="p-md border-b border-outline-variant hover:bg-surface-bright transition-colors duration-150 group last:border-b-0">
+              <div class="flex justify-between text-label-caps font-label-caps text-on-surface-variant mb-sm">
+                <span>{{ match.event | uppercase }}</span>
+                <span>{{ match.date | uppercase }}</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-md w-[40%]">
+                  <span class="text-data-mono font-data-mono text-on-surface-variant w-6">#{{ match.team1.rank || '?' }}</span>
+                  <span class="text-headline-md font-headline-md text-on-surface uppercase">{{ match.team1.name }}</span>
+                </div>
+                <div class="flex flex-col items-center w-[20%]">
+                  <span class="text-display-lg font-display-lg leading-none" [ngClass]="match.team1.score > match.team2.score ? 'text-primary' : 'text-on-surface opacity-50'">{{ match.team1.score }}</span>
+                  <span class="text-label-caps font-label-caps text-on-surface-variant mt-1">
+                    MAPS: 
+                    <span *ngFor="let m of match.maps; let last = last">
+                      {{ m.name | uppercase }} ({{ m.team1_score }}-{{ m.team2_score }}){{ !last ? ', ' : '' }}
+                    </span>
+                  </span>
+                </div>
+                <div class="flex flex-col items-center w-[10%]">
+                  <span class="text-data-mono font-data-mono text-on-surface-variant">:</span>
+                </div>
+                <div class="flex flex-col items-center w-[20%]">
+                  <span class="text-display-lg font-display-lg leading-none" [ngClass]="match.team2.score > match.team1.score ? 'text-primary' : 'text-on-surface opacity-50'">{{ match.team2.score }}</span>
+                </div>
+                <div class="flex items-center justify-end gap-md w-[40%]">
+                  <span class="text-headline-md font-headline-md text-on-surface opacity-50 uppercase">{{ match.team2.name }}</span>
+                  <span class="text-data-mono font-data-mono text-on-surface-variant w-6 text-right">#{{ match.team2.rank || '?' }}</span>
+                </div>
+              </div>
             </div>
-            
-            <div class="players-table-wrapper">
-                <table class="players-table">
-                    <thead>
-                        <tr class="text-uppercase font-mono">
-                            <th style="width: 40px;">#</th>
-                            <th>Player</th>
-                            <th>Maps</th>
-                            <th>K/D</th>
-                            <th>Swing%</th>
-                            <th>ADR</th>
-                            <th>KAST%</th>
-                            <th>Rating</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let p of players(); let i = index" [class.top-3]="i < 3">
-                            <td class="text-orange">{{ i + 1 }}</td>
-                            <td class="text-uppercase">{{ p.name }}</td>
-                            <td>{{ p.N || 0 }}</td>
-                            <td>{{ (p.k / p.d) | number:'1.2-2' }}</td>
-                            <td>{{ p.swing }}%</td>
-                            <td>{{ p.adr }}</td>
-                            <td>{{ p.kast }}%</td>
-                            <td>
-                                <div class="rating-col">
-                                    <div class="rating-bar-wrapper">
-                                        <div class="rating-bar-inner" [style.width.%]="(p.rating / 1.6) * 100" [style.background-color]="p.rating >= 1.30 ? '#3fb950' : '#e3b341'"></div>
-                                    </div>
-                                    <span [style.color]="p.rating >= 1.30 ? '#3fb950' : '#e3b341'">{{ p.rating }}</span>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-    }
-</div>
+            <!-- End Match loop -->
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column: World Rankings (4 cols) -->
+      <div class="lg:col-span-4 flex flex-col gap-gutter bg-outline-variant">
+        <section class="bg-surface-container-lowest flex flex-col border border-outline-variant h-full">
+          <div class="p-xs border-b border-outline-variant flex justify-between items-center bg-surface-container">
+            <h2 class="text-label-caps font-label-caps text-on-surface">WORLD RANKINGS</h2>
+            <span class="text-label-caps font-label-caps text-on-surface-variant">UPDATED EVERY HOUR</span>
+          </div>
+          <div class="flex-grow overflow-y-auto">
+            <table class="w-full text-left border-collapse">
+              <tbody class="text-data-mono font-data-mono">
+                <!-- Ranking loop -->
+                <tr *ngFor="let team of rankings(); let even = even" class="border-b border-outline-variant group hover:bg-[#F0FFF4] transition-colors" [ngClass]="even ? 'bg-surface-container-lowest' : 'bg-surface-bright'">
+                  <td class="p-xs w-8 text-center text-on-surface-variant border-r border-outline-variant">{{ team.rank }}</td>
+                  <td class="p-xs font-semibold text-on-surface border-r border-outline-variant uppercase">{{ team.name }}</td>
+                  <td class="p-xs text-right border-r border-outline-variant">{{ team.points }}</td>
+                  <td class="p-xs w-12 text-center" [ngClass]="team.rank_diff > 0 ? 'text-primary' : (team.rank_diff < 0 ? 'text-error' : 'text-on-surface-variant')">
+                    {{ team.rank_diff > 0 ? '+' : '' }}{{ team.rank_diff === 0 ? '-' : team.rank_diff }}
+                  </td>
+                </tr>
+                <!-- End Ranking loop -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+    </div>
+
+    <!-- 4. Top Players (Full Width) -->
+    <section class="bg-surface-container-lowest flex flex-col border border-outline-variant overflow-x-auto w-full">
+      <div class="p-xs border-b border-outline-variant flex justify-between items-center bg-surface-container">
+        <h2 class="text-label-caps font-label-caps text-on-surface">TOP PLAYERS (LAST 30 DAYS)</h2>
+        <span class="text-label-caps font-label-caps text-on-surface-variant">MIN. 15 MAPS</span>
+      </div>
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-surface-container-low border-b border-outline-variant">
+            <th class="p-xs text-label-caps font-label-caps text-on-surface-variant border-r border-outline-variant w-8 text-center">#</th>
+            <th class="p-xs text-label-caps font-label-caps text-on-surface-variant border-r border-outline-variant">PLAYER</th>
+            <th class="p-xs text-label-caps font-label-caps text-on-surface-variant border-r border-outline-variant text-right">MAPS</th>
+            <th class="p-xs text-label-caps font-label-caps text-on-surface-variant border-r border-outline-variant text-right">K/D</th>
+            <th class="p-xs text-label-caps font-label-caps text-on-surface-variant border-r border-outline-variant text-right">SWING%</th>
+            <th class="p-xs text-label-caps font-label-caps text-on-surface-variant border-r border-outline-variant text-right">ADR</th>
+            <th class="p-xs text-label-caps font-label-caps text-on-surface-variant border-r border-outline-variant text-right">KAST%</th>
+            <th class="p-xs text-label-caps font-label-caps text-on-surface-variant min-w-[120px]">RATING 2.0</th>
+          </tr>
+        </thead>
+        <tbody class="text-data-mono font-data-mono">
+          <!-- Player loop -->
+          <tr *ngFor="let p of players(); let i = index; let even = even" class="border-b border-outline-variant group hover:bg-[#F0FFF4] transition-colors last:border-b-0" [ngClass]="even ? 'bg-surface-container-lowest' : 'bg-surface-bright'">
+            <td class="p-xs border-r border-outline-variant text-center text-on-surface-variant">{{ i + 1 }}</td>
+            <td class="p-xs border-r border-outline-variant text-on-surface font-semibold uppercase">{{ p.name }}</td>
+            <td class="p-xs border-r border-outline-variant text-right">{{ p.N || 0 }}</td>
+            <td class="p-xs border-r border-outline-variant text-right" [ngClass]="(p.k / p.d) >= 1.2 ? 'text-primary' : ((p.k / p.d) >= 1.0 ? 'text-on-surface' : 'text-error')">{{ (p.k / p.d) | number:'1.2-2' }}</td>
+            <td class="p-xs border-r border-outline-variant text-right" [ngClass]="p.swing > 0 ? 'text-primary' : (p.swing < 0 ? 'text-error' : 'text-on-surface-variant')">{{ p.swing > 0 ? '+' : '' }}{{ p.swing }}%</td>
+            <td class="p-xs border-r border-outline-variant text-right">{{ p.adr }}</td>
+            <td class="p-xs border-r border-outline-variant text-right">{{ p.kast }}%</td>
+            <td class="p-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-8 text-right">{{ p.rating }}</span>
+                <div class="h-1 bg-outline-variant flex-grow">
+                  <div class="h-full bg-primary" [ngStyle]="{'width': ((p.rating / 1.6) * 100) + '%', 'background-color': p.rating >= 1.30 ? '#00e639' : (p.rating >= 1.0 ? '#006e16' : '#ba1a1a')}"></div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <!-- End Player loop -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-surface-container full-width bottom-0 border-t border-outline-variant mt-auto">
+    <div class="flex flex-col md:flex-row justify-between items-center w-full px-lg py-md gap-sm">
+      <span class="text-label-caps font-label-caps font-bold text-primary">© 2026 CS:ANALYTICS MARKETPLACE - Àlex Navarro / Alvaro Gomez</span>
+      <div class="flex gap-md">
+        <a class="text-on-surface-variant text-label-caps font-label-caps hover:text-primary underline transition-all opacity-100 hover:opacity-80" href="#">API Status</a>
+        <a class="text-on-surface-variant text-label-caps font-label-caps hover:text-primary underline transition-all opacity-100 hover:opacity-80" href="#">Terms</a>
+        <a class="text-on-surface-variant text-label-caps font-label-caps hover:text-primary underline transition-all opacity-100 hover:opacity-80" href="#">Support</a>
+        <a class="text-on-surface-variant text-label-caps font-label-caps hover:text-primary underline transition-all opacity-100 hover:opacity-80" href="#">Market Rules</a>
+      </div>
+    </div>
+  </footer>
+}

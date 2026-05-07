@@ -1,53 +1,49 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" routerLink="/home">CSGO Comparator</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/compra" routerLinkActive="active">Compra</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/inventario" routerLinkActive="active">Inventario</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/graficos" routerLinkActive="active">Gráficos</a>
-        </li>
-      </ul>
-      <div class="d-flex align-items-center">
-        @if (isLoggedIn) {
-          <div class="me-4 text-end d-none d-md-block">
-            <span class="d-block">Balance DMarket</span>
-            <span>${{ user().balance}}</span>
-          </div>
-          
-          <div class="dropdown">
-            <a class="nav-link dropdown-toggle d-flex align-items-center" style="cursor: pointer;" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              @if (user()?.profile_photo) {
-                <img [src]="user().profile_photo" alt="User" width="30" height="30" class="rounded-circle me-2 border border-cyan" style="object-fit: cover;">
-              } @else {
-                <i class="bi bi-person-circle fs-5 me-2 text-cyan"></i>
-              }
-              {{ user().name }}
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" routerLink="/profile">Perfil</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" style="cursor: pointer;" (click)="logout($event)">Cerrar Sesión</a></li>
-            </ul>
-          </div>
-        } @else {
-          <div class="d-flex gap-2">
-            <a class="btn btn-outline-secondary" routerLink="/login">Login</a>
-            <a class="btn btn-primary" routerLink="/register">Register</a>
-          </div>
-        }
+<header class="bg-surface border-b border-outline-variant docked full-width top-0 z-50">
+  <div class="flex justify-between items-center w-full px-lg h-14 max-w-full">
+    <div class="flex items-center gap-md">
+      <span class="text-headline-md font-headline-md font-bold text-on-surface tracking-tighter cursor-pointer" routerLink="/home">CS:ANALYTICS</span>
+      <nav class="hidden md:flex gap-sm">
+        <a class="pb-1 text-label-caps font-label-caps transition-colors duration-150 active:scale-[0.98]" 
+           routerLink="/home" routerLinkActive="text-primary border-b-2 border-primary" [routerLinkActiveOptions]="{exact: true}"
+           [class]="router.url === '/home' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant font-medium hover:bg-surface-container-low'">Home</a>
+        <a class="pb-1 text-label-caps font-label-caps transition-colors duration-150 active:scale-[0.98]" 
+           routerLink="/compra" routerLinkActive="text-primary border-b-2 border-primary"
+           [class]="router.url === '/compra' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant font-medium hover:bg-surface-container-low'">Market</a>
+      </nav>
+    </div>
+    <div class="flex items-center gap-md">
+      <div class="relative hidden sm:block">
+        <span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]" data-icon="search">search</span>
+        <input class="bg-surface-container-low border border-outline-variant text-label-caps font-label-caps text-on-surface py-[6px] pl-8 pr-3 focus:outline-none focus:border-b-2 focus:border-b-primary focus:border-x-outline-variant focus:border-t-outline-variant transition-all w-64 placeholder:text-on-surface-variant" placeholder="SEARCH TEAMS OR PLAYERS..." type="text"/>
       </div>
+      
+      @if (isLoggedIn) {
+        <div class="flex items-center gap-md">
+          <div class="hidden md:block text-right">
+            <span class="block text-[10px] text-on-surface-variant font-label-caps">BALANCE</span>
+            <span class="text-primary font-data-mono font-bold">${{ user().balance }}</span>
+          </div>
+          <div class="relative group cursor-pointer">
+            <div class="flex items-center gap-2 hover:bg-surface-container-low p-1 rounded transition-colors">
+              @if (user()?.profile_photo) {
+                <img [src]="user().profile_photo" alt="User" class="w-8 h-8 rounded-full border border-primary object-cover">
+              } @else {
+                <span class="material-symbols-outlined text-[32px] text-primary">account_circle</span>
+              }
+              <span class="text-label-caps font-bold text-on-surface">{{ user().name }}</span>
+            </div>
+            <!-- Dropdown -->
+            <div class="absolute right-0 mt-2 w-48 bg-surface border border-outline-variant rounded shadow-lg hidden group-hover:block z-50">
+              <a routerLink="/profile" class="block px-4 py-3 text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">Profile</a>
+              <div class="h-px bg-outline-variant w-full"></div>
+              <a (click)="logout($event)" class="block px-4 py-3 text-label-caps text-error hover:bg-error-container hover:text-error transition-colors cursor-pointer">Logout</a>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <button class="text-on-surface-variant font-medium text-label-caps font-label-caps hover:bg-surface-container-low transition-colors duration-150 active:scale-[0.98] px-sm py-xs border border-transparent" routerLink="/login">Login</button>
+        <button class="bg-primary text-on-primary text-label-caps font-label-caps px-sm py-xs hover:bg-surface-tint transition-colors duration-150 active:scale-[0.98]" routerLink="/register">Register</button>
+      }
     </div>
   </div>
-</nav>
+</header>

@@ -12,7 +12,7 @@ import { AuthService } from '../../services/auth';
 })
 export class Navbar implements OnInit, OnDestroy {
   private authService = inject(AuthService);
-  private router = inject(Router);
+  public router = inject(Router);
 
   // Obtenemos el signal del usuario
   user = this.authService.getUser();
