@@ -48,4 +48,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Relació: Un usuari té molts ítems a la seva propietat (Inventari).
+     */
+    public function items()
+    {
+        return $this->hasMany(UserItem::class);
+    }
+
+    /**
+     * Relació: Un usuari té un historial de moltes operacions.
+     */
+    public function operations()
+    {
+        return $this->hasMany(Operation::class);
+    }
 }

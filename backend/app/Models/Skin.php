@@ -18,6 +18,22 @@ class Skin extends Model
     ];
 
     public function dmarketItems() {
-        return $this->hasMany(MarketItem::class);
+        return $this->hasMany(DMarketItem::class);
+    }
+
+    /**
+     * Relació: Una skin pot estar a l'inventari de molts usuaris.
+     */
+    public function userItems() 
+    {
+        return $this->hasMany(UserItem::class);
+    }
+
+    /**
+     * Relació: Una skin té un historial format per molts registres de preus.
+     */
+    public function priceHistories() 
+    {
+        return $this->hasMany(PriceHistory::class);
     }
 }
