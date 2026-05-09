@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use App\Models\Skin;
+use App\Models\PriceHistory;
 use App\Services\MarketApiService;
 use Carbon\Carbon;
 
@@ -37,7 +38,7 @@ class SyncSkinLowestPrices extends Command
                 // Càlcul de la rendibilitat percentual
                 $profitMargin = round((($steamData['price'] - $dmarketData['price']) / $dmarketData['price']) * 100, 2);
                 
-                Skin::updateOrCreate(
+                $updatedSkin = Skin::updateOrCreate(
                     ['name' => $skinName],
                     [
                         'image_url' => $dmarketData['image'],
@@ -48,6 +49,17 @@ class SyncSkinLowestPrices extends Command
                         'last_updated' => Carbon::now()
                     ]
                 );
+
+                // --- INICI DEL PILOT AUTOMÀTIC (FASE 6) ---
+                // Inserció directa a la taula de l'historial per crear punts a la gràfica
+                PriceHistory::create([
+                    'skin_id'       => $updatedSkin->id,
+                    'steam_price'   => $steamData['price'],
+                    'dmarket_price' => $dmarketData['price'],
+                    'created_at'    => Carbon::now(),
+                    'updated_at'    => Carbon::now(),
+                ]);
+                // --- FI DEL PILOT AUTOMÀTIC ---
 
                 $this->info("✅ Actualitzat: Steam: {$steamData['price']} | DMarket: {$dmarketData['price']} | Marge: {$profitMargin}%");
             } else {

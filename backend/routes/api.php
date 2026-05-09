@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MarketController;
 use App\Http\Controllers\ProStatsController;
+use App\Http\Controllers\OperationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::put('/user', [AuthController::class, 'updateProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    // --- RUTES FASE 5: INVENTARI I OPERACIONS ---
+    Route::post('/operations/buy', [OperationController::class, 'buy']);
+    Route::post('/operations/sell/{inventory_id}', [OperationController::class, 'sell']);
+    Route::get('/user/inventory', [OperationController::class, 'inventory']);
+    Route::get('/user/operations-history', [OperationController::class, 'history']);
 });
 
 // Rutas para la escena Pro (Proxy interno para evitar CORS)
