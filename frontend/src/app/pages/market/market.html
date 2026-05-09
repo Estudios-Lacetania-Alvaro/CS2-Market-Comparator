@@ -1,0 +1,181 @@
+<main class="flex-grow w-full grid grid-cols-12 gap-gutter bg-outline-variant p-md">
+  <!-- Header & Controls -->
+  <div class="col-span-12 bg-surface-container-lowest p-md">
+    <div class="flex justify-between items-end border-b border-outline-variant pb-md">
+      <div>
+        <h1 class="text-headline-md font-headline-md text-on-surface mb-xs uppercase">ARBITRAGE SCANNER</h1>
+      </div>
+    </div>
+    
+    <!-- Quick Stats (Reduced to 3 columns) -->
+    <div class="grid grid-cols-3 gap-gutter bg-outline-variant border border-outline-variant mt-md">
+      <div class="bg-surface-container-lowest p-md">
+        <span class="text-label-caps font-label-caps text-on-surface-variant block mb-xs">ACTIVE LISTINGS</span>
+        <span class="text-data-mono font-data-mono text-xl">{{ totalListings() }}</span>
+      </div>
+      <div class="bg-surface-container-lowest p-md">
+        <span class="text-label-caps font-label-caps text-on-surface-variant block mb-xs">PROFITABLE OPS (>$5)</span>
+        <span class="text-data-mono font-data-mono text-xl text-primary">{{ profitableOps() }}</span>
+      </div>
+      <!-- AVG STEAM FEE MARGIN removed as requested -->
+      <div class="bg-surface-container-lowest p-md flex items-center justify-center p-0">
+        <button (click)="fetchData()" class="bg-primary text-on-primary w-full h-full text-label-caps font-label-caps tracking-widest hover:bg-primary-fixed-variant transition-colors min-h-[64px] font-bold">
+          REFRESH DATA
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Sidebar -->
+  <div class="col-span-12 md:col-span-3 bg-surface-container-lowest p-md">
+    <h2 class="text-label-caps font-label-caps border-b border-outline-variant pb-xs mb-md uppercase">PARAMETERS</h2>
+    <div class="space-y-md">
+      <!-- Search Skins -->
+      <div>
+        <label class="text-label-caps font-label-caps text-on-surface-variant block mb-xs uppercase">SEARCH SKINS</label>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+          <input type="text" [(ngModel)]="searchQuery" placeholder="SKIN NAME..." 
+                 class="w-full pl-10 pr-sm py-xs bg-surface border border-outline-variant text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all uppercase">
+        </div>
+      </div>
+
+      <div>
+        <label class="text-label-caps font-label-caps text-on-surface-variant block mb-xs uppercase">PRICE RANGE (USD)</label>
+        <div class="flex items-center gap-xs">
+          <input class="w-full border border-outline border-b-2 border-b-primary focus:ring-0 text-data-mono font-data-mono py-xs px-sm bg-surface-container-lowest" 
+                 type="number" [(ngModel)]="minPrice" />
+          <span class="text-on-surface-variant">-</span>
+          <input class="w-full border border-outline border-b-2 border-b-primary focus:ring-0 text-data-mono font-data-mono py-xs px-sm bg-surface-container-lowest" 
+                 type="number" [(ngModel)]="maxPrice" />
+        </div>
+      </div>
+
+      <div>
+        <label class="text-label-caps font-label-caps text-on-surface-variant block mb-xs uppercase">WEAPON TYPE</label>
+        <select [(ngModel)]="selectedType" class="w-full border border-outline focus:border-b-2 focus:border-b-primary focus:ring-0 text-data-mono font-data-mono py-xs px-sm bg-surface-container-lowest appearance-none rounded-none uppercase">
+          <option value="All">All Weapons</option>
+          <option value="AK-47">AK-47</option>
+          <option value="M4A4">M4A4</option>
+          <option value="AWP">AWP</option>
+          <option value="Knife">Knives</option>
+          <option value="Glove">Gloves</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="text-label-caps font-label-caps text-on-surface-variant block mb-xs uppercase">SORT BY</label>
+        <div class="flex border border-outline p-gutter bg-outline-variant w-full">
+          <button (click)="toggleSort('net_profit_usd')" 
+                  [ngClass]="sortField() === 'net_profit_usd' ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface'"
+                  class="flex-1 text-label-caps font-label-caps px-base py-xs transition-colors flex items-center justify-center gap-xs">
+            PROFIT 
+            <span class="material-symbols-outlined text-[14px]">
+              {{ sortField() === 'net_profit_usd' ? (sortDirection() === 'asc' ? 'arrow_upward' : 'arrow_downward') : 'unfold_more' }}
+            </span>
+          </button>
+          <button (click)="toggleSort('dmarket_price')" 
+                  [ngClass]="sortField() === 'dmarket_price' ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface'"
+                  class="flex-1 text-label-caps font-label-caps px-base py-xs transition-colors flex items-center justify-center gap-xs">
+            PRICE
+            <span class="material-symbols-outlined text-[14px]">
+              {{ sortField() === 'dmarket_price' ? (sortDirection() === 'asc' ? 'arrow_upward' : 'arrow_downward') : 'unfold_more' }}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-label-caps font-label-caps text-on-surface-variant block mb-xs uppercase">RECOMMENDATION</label>
+        <div class="space-y-xs">
+          <button (click)="setRecommendation('All')" 
+                  [ngClass]="recommendationFilter() === 'All' ? 'bg-surface-container-low border-outline' : 'border-transparent'"
+                  class="w-full flex items-center gap-xs p-xs hover:bg-surface-container-low transition-colors cursor-pointer border text-left">
+            <div class="w-2 h-2 bg-on-surface-variant rounded-full"></div>
+            <span class="text-data-mono font-data-mono text-xs uppercase">All Listings</span>
+          </button>
+          <button (click)="setRecommendation('OPORTUNITAT RENTABLE')" 
+                  [ngClass]="recommendationFilter() === 'OPORTUNITAT RENTABLE' ? 'bg-surface-container-low border-outline' : 'border-transparent'"
+                  class="w-full flex items-center gap-xs p-xs hover:bg-surface-container-low transition-colors cursor-pointer border text-left">
+            <div class="w-2 h-2 bg-primary rounded-full"></div>
+            <span class="text-data-mono font-data-mono text-xs uppercase">Oportunitat Rentable</span>
+          </button>
+          <button (click)="setRecommendation('MARGE BAIX')" 
+                  [ngClass]="recommendationFilter() === 'MARGE BAIX' ? 'bg-surface-container-low border-outline' : 'border-transparent'"
+                  class="w-full flex items-center gap-xs p-xs hover:bg-surface-container-low transition-colors cursor-pointer border text-left">
+            <div class="w-2 h-2 bg-warning rounded-full" style="background-color: #ffd5ae;"></div>
+            <span class="text-data-mono font-data-mono text-xs uppercase">Marge Baix</span>
+          </button>
+          <button (click)="setRecommendation('NO RECOMANABLE')" 
+                  [ngClass]="recommendationFilter() === 'NO RECOMANABLE' ? 'bg-surface-container-low border-outline' : 'border-transparent'"
+                  class="w-full flex items-center gap-xs p-xs hover:bg-surface-container-low transition-colors cursor-pointer border text-left">
+            <div class="w-2 h-2 bg-error rounded-full"></div>
+            <span class="text-data-mono font-data-mono text-xs uppercase">No Recomanable</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Canvas -->
+  <div class="col-span-12 md:col-span-9 bg-surface-container-lowest overflow-x-auto p-md border-l border-outline-variant">
+    @if (loading()) {
+      <div class="flex flex-col items-center justify-center py-xl gap-md">
+        <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <span class="text-label-caps font-label-caps text-on-surface-variant animate-pulse">SYNCHRONIZING GLOBAL MARKETS...</span>
+      </div>
+    } @else {
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-surface-container text-label-caps font-label-caps text-on-surface-variant border-b border-outline-variant">
+            <th class="p-xs font-normal border-r border-outline-variant w-32 text-center uppercase">IMG</th>
+            <th class="p-xs font-normal border-r border-outline-variant uppercase">ITEM DETAILS</th>
+            <th class="p-xs font-normal border-r border-outline-variant text-center uppercase">DMARKET</th>
+            <th class="p-xs font-normal border-r border-outline-variant text-center uppercase">STEAM </th>
+            <th class="p-xs font-normal border-r border-outline-variant text-center uppercase">FEE (10%)</th>
+            <th class="p-xs font-normal border-r border-outline-variant text-center uppercase">NET PROFIT</th>
+            <th class="p-xs font-normal border-r border-outline-variant text-center uppercase">IN-GAME</th>
+            <th class="p-xs font-normal w-20 text-center uppercase">ACT</th>
+          </tr>
+        </thead>
+        <tbody class="text-data-mono font-data-mono">
+          <tr *ngFor="let skin of filteredSkins()" 
+              class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+            <td class="p-xs border-r border-outline-variant text-center py-sm">
+              <img [src]="skin.image" [alt]="skin.name" class="object-cover inline-block border border-outline-variant w-24 h-24 bg-surface" />
+            </td>
+            <td class="p-xs border-r border-outline-variant py-sm">
+              <div class="text-on-surface font-bold" [title]="skin.name">{{ skin.name }}</div>
+              <div class="text-[10px] text-on-surface-variant mt-1 uppercase">{{ skin.recommendation || 'Verified Asset' }}</div>
+            </td>
+            <td class="p-xs border-r border-outline-variant py-sm text-center font-bold text-on-surface">
+              ${{ skin.dmarket_price }}
+            </td>
+            <td class="p-xs border-r border-outline-variant py-sm text-center text-on-surface-variant">
+              ${{ skin.steam_price }}
+            </td>
+            <td class="p-xs border-r border-outline-variant py-sm text-center text-error">
+              -${{ getFee(skin.steam_price) }}
+            </td>
+            <td class="p-xs border-r border-outline-variant py-sm text-center font-bold"
+                [ngClass]="skin.net_profit_usd > 0 ? 'text-primary' : 'text-error'"> {{ skin.net_profit_usd > 0 ? '+' : '' }}${{ skin.net_profit_usd }}
+            </td>
+            <td class="p-xs border-r border-outline-variant text-center py-sm">
+              <button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors text-[18px]">visibility</button>
+            </td>
+            <td class="p-xs text-center py-sm">
+              <button class="material-symbols-outlined bg-primary text-on-primary p-1 hover:bg-on-primary-fixed-variant transition-all text-[18px] rounded-DEFAULT active:scale-95">shopping_cart</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      @if (filteredSkins().length === 0) {
+        <div class="flex flex-col items-center justify-center py-xl gap-sm">
+          <span class="material-symbols-outlined text-[48px] text-on-surface-variant opacity-20">search_off</span>
+          <span class="text-label-caps font-label-caps text-on-surface-variant">NO MATCHING ARBITRAGE OPPORTUNITIES FOUND</span>
+        </div>
+      }
+    }
+  </div>
+</main>

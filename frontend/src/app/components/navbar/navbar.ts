@@ -29,16 +29,8 @@ export class Navbar implements OnInit, OnDestroy {
 
   logout(event: Event) {
     event.preventDefault();
-    this.authService.logout().subscribe({
-      next: () => {
-        localStorage.removeItem('token');
-        this.router.navigate(['/login']);
-      },
-      error: (err) => {
-        console.error('Logout error', err);
-        localStorage.removeItem('token');
-        this.router.navigate(['/login']);
-      }
+    this.authService.logout().subscribe(() => {
+      this.router.navigate(['/login']);
     });
   }
 }

@@ -7,39 +7,65 @@
            routerLink="/home" routerLinkActive="text-primary border-b-2 border-primary" [routerLinkActiveOptions]="{exact: true}"
            [class]="router.url === '/home' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant font-medium hover:bg-surface-container-low'">Home</a>
         <a class="pb-1 text-[16px] font-label-caps transition-colors duration-150 active:scale-[0.98]" 
-           routerLink="/compra" routerLinkActive="text-primary border-b-2 border-primary"
-           [class]="router.url === '/compra' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant font-medium hover:bg-surface-container-low'">Market</a>
+           routerLink="/market" routerLinkActive="text-primary border-b-2 border-primary"
+           [class]="router.url === '/market' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant font-medium hover:bg-surface-container-low'">Market</a>
       </nav>
     </div>
-    <div class="flex items-center gap-md">
-      
-      
+    
+    <div class="flex items-center h-full">
       @if (isLoggedIn) {
-        <div class="flex items-center gap-md">
-          <div class="hidden md:block text-right">
-            <span class="block text-[10px] text-on-surface-variant font-label-caps uppercase">BALANCE</span>
-            <span class="text-primary font-data-mono font-bold">${{ user().balance }}</span>
+        <div class="flex items-center gap-md h-full">
+          <div class="hidden md:flex flex-col text-right justify-center">
+            <span class="block text-[9px] text-on-surface-variant font-label-caps leading-none opacity-70 uppercase mb-1">BALANCE</span>
+            <span class="text-primary font-data-mono font-bold leading-none">${{ user().balance }}</span>
           </div>
-          <div class="relative group cursor-pointer">
-            <div class="flex items-center gap-2 hover:bg-surface-container-low p-1 rounded transition-colors">
+          
+          <!-- Dropdown Container -->
+          <div class="relative group h-full flex items-center ml-sm">
+            <button class="flex items-center gap-2 hover:bg-surface-container-low px-sm py-1 border border-transparent hover:border-outline-variant transition-all rounded-DEFAULT">
               @if (user()?.profile_photo) {
-                <img [src]="user().profile_photo" alt="User" class="w-8 h-8 rounded-full border border-primary object-cover">
+                <img [src]="user().profile_photo" alt="User" class="w-7 h-7 rounded-full border border-primary object-cover">
               } @else {
-                <span class="material-symbols-outlined text-[32px] text-primary">account_circle</span>
+                <span class="material-symbols-outlined text-[28px] text-primary">account_circle</span>
               }
-              <span class="text-label-caps font-bold text-on-surface">{{ user().name }}</span>
-            </div>
-            <!-- Dropdown -->
-            <div class="absolute right-0 mt-2 w-48 bg-surface border border-outline-variant rounded shadow-lg hidden group-hover:block z-50">
-              <a routerLink="/profile" class="block px-4 py-3 text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">Profile</a>
-              <div class="h-px bg-outline-variant w-full"></div>
-              <a (click)="logout($event)" class="block px-4 py-3 text-label-caps text-error hover:bg-error-container hover:text-error transition-colors cursor-pointer">Logout</a>
+              <span class="text-label-caps font-bold text-on-surface uppercase">{{ user().name }}</span>
+              <span class="material-symbols-outlined text-on-surface-variant text-[18px] group-hover:rotate-180 transition-transform">expand_more</span>
+            </button>
+            
+            <!-- Dropdown Menu -->
+            <div class="absolute right-0 top-full mt-0 w-60 bg-surface-container-low border border-outline-variant shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-1 group-hover:translate-y-0 transition-all duration-150 z-[100]">
+              <div class="p-md border-b border-outline-variant bg-surface-container">
+                <span class="text-[9px] font-label-caps text-on-surface-variant block mb-1">LOGGED AS</span>
+                <span class="text-body-base font-bold text-on-surface truncate block">{{ user().email }}</span>
+              </div>
+              
+              <div class="flex flex-col py-xs">
+                <a routerLink="/profile" class="flex items-center gap-sm px-md py-sm text-label-caps font-label-caps text-on-surface hover:bg-primary hover:text-on-primary transition-colors cursor-pointer">
+                  <span class="material-symbols-outlined text-[18px]">person</span>
+                  PROFILE_TERMINAL
+                </a>
+                
+                <div class="h-px bg-outline-variant w-[90%] mx-auto my-xs"></div>
+                
+                <a (click)="logout($event)" class="flex items-center gap-sm px-md py-sm text-label-caps font-label-caps text-error hover:bg-error hover:text-on-error transition-colors cursor-pointer">
+                  <span class="material-symbols-outlined text-[18px]">logout</span>
+                  SECURE_LOGOUT
+                </a>
+              </div>
+              
+              <!-- Footer decoration -->
+              <div class="px-md py-xs bg-surface border-t border-outline-variant text-[9px] text-on-surface-variant font-data-mono flex justify-between opacity-50 uppercase">
+                <span>SEC_AUTH: 100%</span>
+                <span>V2.4.1</span>
+              </div>
             </div>
           </div>
         </div>
       } @else {
-        <button class="text-on-surface-variant font-medium text-label-caps font-label-caps hover:bg-surface-container-low transition-colors duration-150 active:scale-[0.98] px-sm py-xs border border-transparent" routerLink="/login">Login</button>
-        <button class="bg-primary text-on-primary text-label-caps font-label-caps px-sm py-xs hover:bg-on-primary-fixed-variant transition-colors duration-150 active:scale-[0.98]" routerLink="/register">Register</button>
+        <div class="flex items-center gap-sm">
+          <button class="text-on-surface-variant font-medium text-label-caps font-label-caps hover:bg-surface-container-low transition-colors duration-150 active:scale-[0.98] px-sm py-xs border border-transparent" routerLink="/login">Login</button>
+          <button class="bg-primary text-on-primary text-label-caps font-label-caps px-sm py-xs hover:bg-on-primary-fixed-variant transition-colors duration-150 active:scale-[0.98] border border-primary rounded-DEFAULT" routerLink="/register">Register</button>
+        </div>
       }
     </div>
   </div>

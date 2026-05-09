@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, effect } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
@@ -12,7 +12,10 @@ import { Router } from '@angular/router';
   styleUrl: './profile.css'
 })
 export class Profile implements OnInit {
-  // Usamos signals para que Angular detecte los cambios
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  // Usamos un objeto local para el formulario para evitar que el effect lo sobrescriba
   user = signal<any>({
     name: '',
     email: '',
@@ -21,20 +24,16 @@ export class Profile implements OnInit {
   });
   profileImage = signal<string>("");
 
-  constructor(private authService: AuthService, private router: Router) {
-    // Sincronizamos con el signal global de AuthService
-    effect(() => {
-      const globalUser = this.authService.getUser()();
-      if (globalUser) {
-        this.user.set({ ...globalUser });
-        if (globalUser.profile_photo) {
-          this.profileImage.set(globalUser.profile_photo);
-        }
+  ngOnInit() {
+    // Cargamos los datos iniciales del servicio
+    const current = this.authService.getUser()();
+    if (current) {
+      this.user.set({ ...current });
+      if (current.profile_photo) {
+        this.profileImage.set(current.profile_photo);
       }
-    }, { allowSignalWrites: true });
+    }
   }
-
-  ngOnInit() {}
 
   saveProfile() {
     const userData = this.user();
@@ -50,16 +49,16 @@ export class Profile implements OnInit {
       },
       error: (err) => {
         console.error('Error updating profile', err);
-        alert('Error updating profile');
+        // Mostramos el mensaje de error real para saber qué falla (ej: email duplicado)
+        const msg = err.error?.message || 'Error updating profile';
+        alert(msg);
       }
     });
   }
 
   logout() {
-    this.authService.logout().subscribe({
-      next: () => {
-        this.router.navigate(['/login']);
-      }
+    this.authService.logout().subscribe(() => {
+      this.router.navigate(['/login']);
     });
   }
 
@@ -68,7 +67,6 @@ export class Profile implements OnInit {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        // Al actualizar el signal, la vista se refresca instantáneamente
         this.profileImage.set(e.target.result);
       };
       reader.readAsDataURL(file);

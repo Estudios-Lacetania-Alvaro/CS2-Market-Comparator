@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal, computed } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, catchError, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -19,14 +19,17 @@ export class AuthService {
     }
     
     if (localStorage.getItem('token')) {
-      this.fetchUser().subscribe();
+      this.fetchUser().subscribe({
+        error: () => this.clearSession()
+      });
     }
   }
 
   register(data:any){
     return this.http.post(`${this.apiUrl}/register`, data).pipe(
       tap((res: any) => {
-        if (res.user) {
+        if (res.user && res.token) {
+          localStorage.setItem('token', res.token);
           this.currentUserSignal.set(res.user);
           localStorage.setItem('user', JSON.stringify(res.user));
         }
@@ -37,7 +40,8 @@ export class AuthService {
   login(data:any){
     return this.http.post(`${this.apiUrl}/login`, data).pipe(
       tap((res: any) => {
-        if (res.user) {
+        if (res.user && res.token) {
+          localStorage.setItem('token', res.token);
           this.currentUserSignal.set(res.user);
           localStorage.setItem('user', JSON.stringify(res.user));
         }
@@ -47,6 +51,8 @@ export class AuthService {
 
   fetchUser(): Observable<any> {
     const token = localStorage.getItem('token');
+    if (!token) return of(null);
+    
     return this.http.get(`${this.apiUrl}/user`, {
       headers: { Authorization: `Bearer ${token}` }
     }).pipe(
@@ -54,6 +60,12 @@ export class AuthService {
         const userData = user.user ? user.user : user;
         this.currentUserSignal.set(userData);
         localStorage.setItem('user', JSON.stringify(userData));
+      }),
+      catchError((err) => {
+        if (err.status === 401) {
+          this.clearSession();
+        }
+        return of(null);
       })
     );
   }
@@ -81,11 +93,17 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/logout`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     }).pipe(
-      tap(() => {
-        this.currentUserSignal.set(null);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+      tap(() => this.clearSession()),
+      catchError(() => {
+        this.clearSession();
+        return of(null);
       })
     );
+  }
+
+  private clearSession() {
+    this.currentUserSignal.set(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   }
 }

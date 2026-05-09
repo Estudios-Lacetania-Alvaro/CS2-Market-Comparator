@@ -1,72 +1,136 @@
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-4 mb-4">
-            <div class="card dark-card text-center shadow-lg border-0 h-100">
-                <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                    <div class="position-relative mb-4">
-                        <img [src]="profileImage()" alt="Profile Picture"
-                            class="rounded-circle profile-img-large border border-cyan shadow"
-                            style="object-fit: cover; width: 150px; height: 150px;">
-                        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;"
-                            accept="image/*">
-                        <button class="btn btn-sm btn-cyan position-absolute bottom-0 end-0 rounded-circle p-2"
-                            title="Change Photo" (click)="fileInput.click()">
-                            <i class="bi bi-camera-fill"></i>
-                        </button>
-                    </div>
-                    <h3 class="fw-bold text-light mb-1">{{ user().name }}</h3>
-                    <p class="text-secondary mb-4">{{ user().email}}</p>
-
-                    <div class="w-100 p-3 rounded dmarket-balance-card mb-3">
-                        <p class="text-uppercase text-secondary small fw-bold mb-1">Balance DMarket</p>
-                        <h2 class="text-success fw-bold mb-0">${{ user().balance}}</h2>
-                    </div>
-
-                    <button class="btn btn-dark-outline w-100 mt-auto" (click)="logout()">
-                        <i class="bi bi-box-arrow-right me-2"></i> Logout
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-8 mb-4">
-            <div class="card dark-card shadow-lg border-0 h-100">
-                <div class="card-header border-bottom border-secondary bg-transparent py-3">
-                    <h5 class="mb-0 text-cyan"><i class="bi bi-person-lines-fill me-2"></i> Personal Information</h5>
-                </div>
-                <div class="card-body">
-                    <form (submit)="saveProfile()">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Username</label>
-                                <input type="text" class="form-control dark-input" [(ngModel)]="user().name" name="name"
-                                    required>
-                            </div>
-                            <div class="col-md-6 mt-3 mt-md-0">
-                                <label class="form-label">Email Address</label>
-                                <input type="email" class="form-control dark-input" [(ngModel)]="user().email"
-                                    name="email" required>
-                            </div>
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label class="form-label">Steam Trade URL</label>
-                                <input type="text" class="form-control dark-input"
-                                    placeholder="https://steamcommunity.com/tradeoffer/new/?partner=...">
-                            </div>
-                            <div class="col-md-6 mt-3 mt-md-0">
-                                <label class="form-label">DMarket API Key</label>
-                                <input type="password" class="form-control dark-input" placeholder="••••••••••••••••">
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-cyan px-4">Save Changes</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+<main class="flex-grow flex flex-col items-center py-xl px-lg">
+  <div class="w-full max-w-7xl flex flex-col gap-lg">
+    <!-- Page Header -->
+    <div class="flex flex-col gap-base pb-sm border-b border-outline-variant">
+      <h1 class="text-headline-md font-headline-md text-on-surface">Account Management</h1>
     </div>
-</div>
+
+    <!-- Bento Grid Layout -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter bg-outline-variant border border-outline-variant">
+      <!-- Personal Info Card -->
+      <div class="bg-surface-container-lowest p-lg col-span-1 md:col-span-2 flex flex-col gap-md relative group hover:bg-surface-container-low transition-colors">
+        <div class="absolute top-md right-md text-on-surface-variant opacity-50">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+        <div class="flex items-start gap-md">
+          <div class="relative w-24 h-24 rounded-DEFAULT overflow-hidden border border-outline-variant">
+            <img [src]="profileImage()" alt="User Profile Image" class="w-full h-full object-cover" />
+            <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;" accept="image/*">
+          </div>
+          <div class="flex flex-col gap-base pt-xs">
+            <h2 class="text-headline-md font-headline-md text-on-surface uppercase">{{ user().name }}</h2>
+            <span class="text-data-mono font-data-mono text-on-surface-variant">ID: {{ user().id || 'AUTHENTICATED_USER' }}</span>
+            <button (click)="fileInput.click()" class="mt-base text-label-caps font-label-caps text-primary hover:underline flex items-center gap-xs">
+              <span class="material-symbols-outlined text-[14px]">add_a_photo</span> CHANGE PROFILE PICTURE
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-col gap-sm mt-sm">
+          <div class="flex flex-col gap-base">
+            <label class="text-label-caps font-label-caps text-on-surface-variant">Email Address</label>
+            <div class="border border-outline-variant bg-surface px-sm py-xs text-data-mono font-data-mono text-on-surface flex justify-between items-center">
+              <span>{{ user().email }}</span>
+              <span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-base">
+            <label class="text-label-caps font-label-caps text-on-surface-variant">Account Status</label>
+            <div class="border border-outline-variant bg-surface px-sm py-xs text-data-mono font-data-mono flex items-center gap-xs">
+              <div class="w-2 h-2 bg-primary rounded-full"></div>
+              <span class="text-on-surface uppercase">Active / Verified Terminal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial Integration Card -->
+      <div class="bg-surface-container-lowest p-lg col-span-1 flex flex-col justify-between hover:bg-surface-container-low transition-colors">
+        <div class="flex flex-col gap-md">
+          <div class="flex justify-between items-center">
+            <span class="text-label-caps font-label-caps text-on-surface-variant">DMARKET INTEGRATION</span>
+            <span class="material-symbols-outlined text-on-surface-variant text-[18px]">account_balance_wallet</span>
+          </div>
+          <div class="flex flex-col gap-base">
+            <span class="text-data-mono font-data-mono text-on-surface-variant uppercase">Available Balance</span>
+            <span class="text-headline-md font-headline-md text-on-surface tracking-tighter">${{ user().balance }}</span>
+          </div>
+          <div class="flex flex-col gap-base border-t border-outline-variant pt-sm">
+            <div class="flex justify-between items-center text-data-mono font-data-mono">
+              <span class="text-on-surface-variant">Locked Value</span>
+              <span class="text-on-surface">$0.00</span>
+            </div>
+            <div class="flex justify-between items-center text-data-mono font-data-mono">
+              <span class="text-on-surface-variant">Status</span>
+              <span class="text-primary font-bold">Connected</span>
+            </div>
+          </div>
+        </div>
+        <button class="w-full mt-lg bg-surface text-on-surface border border-outline-variant py-xs text-label-caps font-label-caps hover:bg-primary hover:text-on-primary hover:border-primary transition-colors flex justify-center items-center gap-xs uppercase">
+          <span class="material-symbols-outlined text-[16px]">sync</span>
+          SYNC BALANCE
+        </button>
+      </div>
+
+      <!-- Account Settings Section -->
+      <div class="bg-surface-container-lowest p-lg col-span-1 md:col-span-3 border-t border-outline-variant">
+        <div class="flex flex-col gap-lg">
+          <div>
+            <span class="text-label-caps font-label-caps text-on-surface-variant block mb-md uppercase">ACCOUNT SETTINGS</span>
+            <form (ngSubmit)="saveProfile()" class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+              <!-- Edit Full Name -->
+              <div class="flex flex-col gap-base">
+                <label class="text-label-caps font-label-caps text-on-surface-variant">Full Name</label>
+                <input class="bg-surface border border-outline-variant px-sm py-xs text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all uppercase" 
+                       type="text" name="name" [(ngModel)]="user().name" required />
+              </div>
+              <!-- Edit Email Address -->
+              <div class="flex flex-col gap-base">
+                <label class="text-label-caps font-label-caps text-on-surface-variant">Email Address</label>
+                <input class="bg-surface border border-outline-variant px-sm py-xs text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" 
+                       type="email" name="email" [(ngModel)]="user().email" required />
+              </div>
+              <div class="md:col-span-2">
+                <button type="submit" class="bg-primary text-on-primary px-lg py-xs text-label-caps font-label-caps hover:bg-primary-container hover:text-on-primary-container transition-colors uppercase">
+                  SAVE CHANGES
+                </button>
+              </div>
+            </form>
+          </div>
+          
+          <div class="border-t border-outline-variant pt-lg">
+            <span class="text-label-caps font-label-caps text-on-surface-variant block mb-md uppercase">CHANGE PASSWORD</span>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+              <div class="flex flex-col gap-base">
+                <label class="text-label-caps font-label-caps text-on-surface-variant uppercase">Current Password</label>
+                <input class="bg-surface border border-outline-variant px-sm py-xs text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="••••••••" type="password" />
+              </div>
+              <div class="flex flex-col gap-base">
+                <label class="text-label-caps font-label-caps text-on-surface-variant uppercase">New Password</label>
+                <input class="bg-surface border border-outline-variant px-sm py-xs text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="••••••••" type="password" />
+              </div>
+              <div class="flex flex-col gap-base">
+                <label class="text-label-caps font-label-caps text-on-surface-variant uppercase">Confirm New Password</label>
+                <input class="bg-surface border border-outline-variant px-sm py-xs text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="••••••••" type="password" />
+              </div>
+            </div>
+            <button class="mt-md bg-surface text-on-surface border border-outline-variant px-lg py-xs text-label-caps font-label-caps hover:bg-primary hover:text-on-primary hover:border-primary transition-colors uppercase">
+              UPDATE PASSWORD
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session Security Card -->
+      <div class="bg-surface-container-lowest p-lg col-span-1 md:col-span-3 flex flex-col sm:flex-row justify-between items-center gap-md">
+        <div class="flex flex-col gap-base">
+          <span class="text-label-caps font-label-caps text-on-surface-variant uppercase">SESSION SECURITY</span>
+          <span class="text-body-base font-body-base text-on-surface">Manage your active sessions and secure your account.</span>
+        </div>
+        <button (click)="logout()" class="px-lg py-sm bg-error text-on-error border border-error hover:bg-error-container hover:text-on-error-container transition-colors text-label-caps font-label-caps flex items-center gap-xs w-full sm:w-auto justify-center uppercase">
+          <span class="material-symbols-outlined text-[18px]">logout</span>
+          SECURE LOGOUT
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
