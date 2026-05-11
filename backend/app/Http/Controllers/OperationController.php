@@ -26,11 +26,6 @@ class OperationController extends Controller
 
         $user = $request->user();
 
-        // Verificació de liquiditat: comprovem si l'usuari té prous diners
-        if ($user->balance < $request->price) {
-            return response()->json(['message' => 'Saldo insuficient per realitzar la compra'], 400);
-        }
-
         // Creació de l'actiu a l'inventari (es guarda com a 'owned' per defecte)
         $userItem = UserItem::create([
             'user_id'        => $user->id,
@@ -130,5 +125,94 @@ class OperationController extends Controller
                             ->get();
         
         return response()->json($operations, 200);
+    }
+
+    /**
+     * Importa l'inventari extern de l'usuari (Steam/DMarket) cap a la nostra base de dades local.
+     */
+    public function importExternalInventory(Request $request)
+    {
+        $user = $request->user();
+
+        // SIMULACIÓ DE L'API EXTERNA: 
+        // A la vida real, aquí faríem un Http::get() a DMarket o Steam utilitzant el SteamID de l'usuari.
+        // Simulem que l'API ens retorna dues armes que l'usuari ja tenia a la seva propietat.
+        $externalItems = [
+            ['name' => 'AK-47 | Redline (Field-Tested)', 'estimated_price' => 43.31],
+            ['name' => 'AWP | Asiimov (Field-Tested)',   'estimated_price' => 105.00],
+        ];
+
+        $importedCount = 0;
+
+        foreach ($externalItems as $item) {
+            // Busquem si l'arma existeix al nostre catàleg mestre
+            $skin = Skin::where('name', $item['name'])->first();
+
+            if ($skin) {
+                // Evitem duplicats: comprovem que l'usuari no tingui ja aquesta arma importada
+                $alreadyImported = UserItem::where('user_id', $user->id)
+                                        ->where('skin_id', $skin->id)
+                                        ->where('status', 'owned')
+                                        ->exists();
+
+                if (!$alreadyImported) {
+                    // Inserim l'arma a l'inventari intern de l'usuari
+                    // Nota financera: Com que no sabem quant li va costar en el passat, 
+                    // assignem el preu actual de mercat com a preu d'adquisició base.
+                    UserItem::create([
+                        'user_id'        => $user->id,
+                        'skin_id'        => $skin->id,
+                        'purchase_price' => $item['estimated_price'], 
+                        'status'         => 'owned'
+                    ]);
+
+                    $importedCount++;
+                }
+            }
+        }
+
+        return response()->json([
+            'message'        => "Sincronització completada. S'han importat {$importedCount} noves armes.",
+            'imported_count' => $importedCount
+        ], 200);
+    }
+
+    /**
+     * Calcula les estadístiques globals i el valor en temps real del portafoli
+     * creuant el preu de compra amb el lowest price actual del catàleg.
+     */
+    public function portfolioStats(Request $request)
+    {
+        $user = $request->user();
+
+        // Recuperem només les armes que l'usuari té actives a l'inventari
+        $activeItems = UserItem::where('user_id', $user->id)
+                            ->where('status', 'owned')
+                            ->with('skin')
+                            ->get();
+
+        $totalInvested = 0;
+        $currentEstimatedValue = 0;
+
+        foreach ($activeItems as $item) {
+            // Sumem el que l'usuari es va gastar de la seva butxaca
+            $totalInvested += $item->purchase_price;
+
+            // Busquem el lowest_price actualitzat (prioritzem DMarket, si no Steam)
+            $currentFloorPrice = $item->skin->dmarket_price ?? ($item->skin->steam_price ?? 0);
+            $currentEstimatedValue += $currentFloorPrice;
+        }
+
+        // Càlcul del benefici potencial si vengués tot avui al preu mínim
+        $potentialProfit = $currentEstimatedValue - $totalInvested;
+        $potentialProfitPercentage = $totalInvested > 0 ? round(($potentialProfit / $totalInvested) * 100, 2) : 0;
+
+        return response()->json([
+            'total_invested'              => round($totalInvested, 2),
+            'current_estimated_value'     => round($currentEstimatedValue, 2),
+            'potential_profit'            => round($potentialProfit, 2),
+            'potential_profit_percentage' => $potentialProfitPercentage,
+            'realized_roi'                => $user->balance // Els diners ja guanyats/perduts en vendes tancades
+        ], 200);
     }
 }
