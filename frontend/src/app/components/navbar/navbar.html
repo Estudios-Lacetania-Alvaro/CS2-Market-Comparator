@@ -9,6 +9,12 @@
         <a class="pb-1 text-[16px] font-label-caps transition-colors duration-150 active:scale-[0.98]" 
            routerLink="/market" routerLinkActive="text-primary border-b-2 border-primary"
            [class]="router.url === '/market' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant font-medium hover:bg-surface-container-low'">Market</a>
+        <a class="pb-1 text-[16px] font-label-caps transition-colors duration-150 active:scale-[0.98]" 
+           routerLink="/inventory" routerLinkActive="text-primary border-b-2 border-primary"
+           [class]="router.url === '/inventory' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant font-medium hover:bg-surface-container-low'">Inventory</a>
+        <a class="pb-1 text-[16px] font-label-caps transition-colors duration-150 active:scale-[0.98]" 
+           routerLink="/charts" routerLinkActive="text-primary border-b-2 border-primary"
+           [class]="router.url === '/charts' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant font-medium hover:bg-surface-container-low'">Charts</a>
       </nav>
     </div>
     
@@ -17,7 +23,7 @@
         <div class="flex items-center gap-md h-full">
           <div class="hidden md:flex flex-col text-right justify-center">
             <span class="block text-[9px] text-on-surface-variant font-label-caps leading-none opacity-70 uppercase mb-1">BALANCE</span>
-            <span class="text-primary font-data-mono font-bold leading-none">${{ user().balance }}</span>
+            <span class="text-primary font-data-mono font-bold leading-none">${{ user().balance | number:'1.2-2' }}</span>
           </div>
           
           <!-- Dropdown Container -->

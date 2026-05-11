@@ -1,7 +1,10 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MarketService } from '../../services/market.service';
+import { AuthService } from '../../services/auth';
+import { InventoryService } from '../../services/inventory.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-market',
@@ -11,6 +14,11 @@ import { MarketService } from '../../services/market.service';
   styleUrls: ['./market.css']
 })
 export class Market implements OnInit {
+  private marketService = inject(MarketService);
+  private authService = inject(AuthService);
+  private inventoryService = inject(InventoryService);
+  private router = inject(Router);
+
   skins = signal<any[]>([]);
   loading = signal<boolean>(true);
 
@@ -21,15 +29,26 @@ export class Market implements OnInit {
   selectedType = signal<string>('All');
   recommendationFilter = signal<string>('All');
   
+  // Image Preview
+  selectedImage = signal<string | null>(null);
+  
   // Sorting
   sortField = signal<string>('net_profit_usd');
   sortDirection = signal<'asc' | 'desc'>('desc');
+
+  // Transaction Modal
+  transactionModal = signal<any | null>(null);
+  customPrice = signal<number>(0);
+
+  // Pagination
+  currentPage = signal<number>(1);
+  pageSize = signal<number>(20);
   
   // Computed stats
   totalListings = computed(() => this.skins().length);
   profitableOps = computed(() => this.skins().filter(s => (s.net_profit_usd || 0) > 5).length);
 
-  // Filtered and Sorted skins
+  // Filtered and Sorted skins (Base for pagination)
   filteredSkins = computed(() => {
     let result = this.skins().filter(skin => {
       const matchesSearch = skin.name.toLowerCase().includes(this.searchQuery().toLowerCase());
@@ -51,17 +70,34 @@ export class Market implements OnInit {
     return result.sort((a, b) => {
       const field = this.sortField();
       const dir = this.sortDirection() === 'asc' ? 1 : -1;
-      
       const valA = a[field] || 0;
       const valB = b[field] || 0;
-      
       if (valA < valB) return -1 * dir;
       if (valA > valB) return 1 * dir;
       return 0;
     });
   });
 
-  constructor(private marketService: MarketService) {}
+  // Paginated skins for the view
+  paginatedSkins = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    const end = start + this.pageSize();
+    return this.filteredSkins().slice(start, end);
+  });
+
+  totalPages = computed(() => Math.ceil(this.filteredSkins().length / this.pageSize()));
+
+  constructor() {
+    // Reset to page 1 when filters change
+    effect(() => {
+      this.searchQuery();
+      this.minPrice();
+      this.maxPrice();
+      this.selectedType();
+      this.recommendationFilter();
+      this.currentPage.set(1);
+    }, { allowSignalWrites: true });
+  }
 
   ngOnInit() {
     this.fetchData();
@@ -98,5 +134,68 @@ export class Market implements OnInit {
       this.sortField.set(field);
       this.sortDirection.set('desc');
     }
+  }
+
+  nextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update(p => p + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.update(p => p - 1);
+    }
+  }
+
+  goToPage(page: number) {
+    this.currentPage.set(page);
+  }
+
+  openImagePreview(imageUrl: string) {
+    this.selectedImage.set(imageUrl);
+  }
+
+  closeImagePreview() {
+    this.selectedImage.set(null);
+  }
+
+  onBuy(skin: any) {
+    this.transactionModal.set(skin);
+    this.customPrice.set(skin.dmarket_price);
+  }
+
+  closeTransaction() {
+    this.transactionModal.set(null);
+  }
+
+  onSell(skin: any) {
+    if (!this.authService.getUser()()) {
+      alert('Please login to sell items.');
+      return;
+    }
+    
+    // Simplicamos: Redirigimos al inventario con un parámetro de búsqueda
+    // para que el usuario pueda encontrar su ítem fácilmente.
+    alert(`Redirecting to your inventory to sell ${skin.name}...`);
+    // Redirigimos al inventario
+    this.router.navigate(['/inventory']);
+  }
+
+  confirmBuy() {
+    const skin = this.transactionModal();
+    if (!skin) return;
+
+    this.marketService.buySkin(skin.id, this.customPrice()).subscribe({
+      next: (res: any) => {
+        alert(`TRANSACTION SUCCESSFUL\nItem: ${skin.name}\nPurchase Price: $${this.customPrice()}\nRemaining Balance: $${res.new_balance.toFixed(2)}`);
+        this.authService.fetchUser().subscribe();
+        this.closeTransaction();
+        this.fetchData();
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Transaction failed');
+      }
+    });
   }
 }

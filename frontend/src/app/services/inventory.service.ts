@@ -3,23 +3,19 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
-export class MarketService {
+export class InventoryService {
   private apiUrl = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient) {}
 
-  getMarketSkins() {
-    return this.http.get<{success: boolean, data: any[]}>(`${this.apiUrl}/market/skins`);
+  getInventory(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/user/inventory`);
   }
 
-  getDMarketItems(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/market/dmarket-items`);
-  }
-
-  buySkin(skinId: number, price: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/operations/buy`, { skin_id: skinId, price: price });
+  getOperationsHistory(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/user/operations-history`);
   }
 
   sellSkin(inventoryId: number, sellPrice: number): Observable<any> {

@@ -1,0 +1,249 @@
+<main class="pt-8 pb-md px-md md:px-lg w-full flex flex-col gap-md">
+  <!-- Dashboard Header -->
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+    <div>
+      <span class="text-label-caps font-label-caps text-primary mb-base block">ASSET MANAGEMENT</span>
+      <h1 class="text-display-lg font-display-lg text-on-surface uppercase tracking-tight">Inventory & Movements</h1>
+    </div>
+    </div>
+
+  <!-- Top Section: Performance Metrics -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-md">
+    <div class="bg-white border border-outline-variant p-md flex flex-col justify-center min-h-[100px]">
+      <span class="text-label-caps font-label-caps text-on-surface-variant">TOTAL INVESTED</span>
+      <p class="text-headline-md font-bold mt-xs">${{ totalInvested() | number:'1.2-2' }}</p>
+    </div>
+    <div class="bg-white border border-outline-variant p-md flex flex-col justify-center min-h-[100px]">
+      <span class="text-label-caps font-label-caps text-on-surface-variant">EST. CURRENT VALUE</span>
+      <p class="text-headline-md font-bold mt-xs text-primary">${{ currentValue() | number:'1.2-2' }}</p>
+    </div>
+    <div class="bg-white border border-outline-variant p-md flex flex-col justify-center min-h-[100px]">
+      <span class="text-label-caps font-label-caps text-on-surface-variant">ACCUMULATED ROI</span>
+      <p class="text-headline-md font-bold mt-xs text-primary">+{{ roi() | number:'1.1-1' }}%</p>
+    </div>
+  </section>
+
+  <!-- Middle Section: Inventory Grid -->
+  <div class="grid grid-cols-1 gap-lg">
+    <section>
+      <div class="border border-outline-variant bg-white overflow-hidden">
+        <div class="p-md border-b border-outline-variant flex justify-between items-center bg-surface-bright">
+          <span class="text-label-caps font-label-caps flex items-center gap-xs">
+            <span class="material-symbols-outlined text-[16px]">inventory_2</span>
+            Current Inventory
+          </span>
+          <span class="text-data-mono text-on-surface-variant uppercase text-[10px] font-bold">{{ inventory().length }} ITEMS TOTAL</span>
+        </div>
+        
+        <div class="grid-hairline grid-cols-1 md:grid-cols-2">
+          @if (loading()) {
+            <div class="col-span-full p-xl text-center text-on-surface-variant animate-pulse uppercase tracking-widest text-xs">
+              Synchronizing inventory with global network...
+            </div>
+          } @else if (inventory().length === 0) {
+            <div class="col-span-full p-xl text-center text-on-surface-variant uppercase tracking-widest text-xs">
+              No items detected in your inventory.
+            </div>
+          } @else {
+            <div *ngFor="let item of paginatedInventory()" class="cell-bg p-md hover:bg-surface-container-low transition-colors group cursor-pointer border-r border-outline-variant inventory-card">
+              <div class="flex gap-md h-full">
+                <div class="w-24 h-24 bg-surface-container-lowest border border-outline-variant p-2 flex items-center justify-center shrink-0">
+                  <img class="w-full h-auto object-contain max-h-full" 
+                       [src]="item.skin?.image_url || 'https://via.placeholder.com/150?text=Skin'" 
+                       [alt]="item.skin?.name" />
+                </div>
+                <div class="flex-1 flex flex-col justify-between">
+                  <div>
+                    <div class="flex justify-between items-start gap-xs">
+                      <span class="text-label-caps font-bold text-primary truncate max-w-[200px]">{{ item.skin?.name }}</span>
+                    </div>
+                    <div class="mt-sm grid grid-cols-2 gap-md">
+                      <div>
+                        <p class="text-[9px] text-on-surface-variant font-bold uppercase tracking-tighter">Cost Basis</p>
+                        <p class="text-data-mono text-sm">${{ item.purchase_price }}</p>
+                      </div>
+                      <div>
+                        <p class="text-[9px] text-on-surface-variant font-bold uppercase tracking-tighter">Acquired</p>
+                        <p class="text-data-mono text-sm">{{ formatDate(item.created_at) }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-xs pt-xs border-t border-outline-variant flex justify-end">
+                    <button (click)="$event.stopPropagation(); onSell(item)" 
+                            class="text-[10px] font-label-caps text-error border border-error px-sm py-1 hover:bg-error hover:text-white transition-all uppercase active:scale-95">
+                      Sell Asset
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Inventory Pagination Controls -->
+        <div class="p-md border-t border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+          <div class="text-[10px] text-on-surface-variant font-data-mono uppercase">
+            Showing Page {{ currentPage() }} of {{ totalPages() || 1 }}
+          </div>
+          <div class="flex gap-xs">
+            <button (click)="currentPage.set(currentPage() - 1)" [disabled]="currentPage() === 1"
+                    class="material-symbols-outlined p-1 border border-outline-variant hover:bg-surface-container-low disabled:opacity-30 disabled:hover:bg-transparent transition-all active:scale-90">
+              chevron_left
+            </button>
+            <button (click)="currentPage.set(currentPage() + 1)" [disabled]="currentPage() >= totalPages()"
+                    class="material-symbols-outlined p-1 border border-outline-variant hover:bg-surface-container-low disabled:opacity-30 disabled:hover:bg-transparent transition-all active:scale-90">
+              chevron_right
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Bottom Section: Movement History (Full Width) -->
+  <section class="w-full">
+    <div class="border border-outline-variant bg-white flex flex-col">
+      <div class="p-md border-b border-outline-variant flex flex-col md:flex-row justify-between items-center bg-surface-bright gap-md">
+        <span class="text-label-caps font-label-caps flex items-center gap-xs">
+          <span class="material-symbols-outlined text-[16px]">history</span>
+          Movement History
+        </span>
+        
+        <div class="flex items-center gap-md">
+          <!-- Tabs inside History -->
+          <div class="flex gap-xs bg-surface-container-low p-1 border border-outline-variant">
+            <button (click)="currentTab.set('GENERAL')" 
+                    [class.bg-primary]="currentTab() === 'GENERAL'" 
+                    [class.text-white]="currentTab() === 'GENERAL'"
+                    [class.text-on-surface-variant]="currentTab() !== 'GENERAL'"
+                    class="px-sm py-1 text-[10px] font-label-caps transition-all">GENERAL</button>
+            <button (click)="currentTab.set('PURCHASES')" 
+                    [class.bg-primary]="currentTab() === 'PURCHASES'" 
+                    [class.text-white]="currentTab() === 'PURCHASES'"
+                    [class.text-on-surface-variant]="currentTab() !== 'PURCHASES'"
+                    class="px-sm py-1 text-[10px] font-label-caps transition-all">PURCHASES</button>
+            <button (click)="currentTab.set('SALES')" 
+                    [class.bg-primary]="currentTab() === 'SALES'" 
+                    [class.text-white]="currentTab() === 'SALES'"
+                    [class.text-on-surface-variant]="currentTab() !== 'SALES'"
+                    class="px-sm py-1 text-[10px] font-label-caps transition-all">SALES</button>
+          </div>
+
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px]">search</span>
+            <input type="text" 
+                   [ngModel]="historySearch()" 
+                   (ngModelChange)="historySearch.set($event)"
+                   placeholder="Search history..." 
+                   class="bg-surface-container-low border border-outline-variant pl-8 pr-md py-1 text-[10px] font-data-mono focus:ring-1 focus:ring-primary focus:border-primary outline-none uppercase w-48">
+          </div>
+          <span class="text-data-mono text-on-surface-variant uppercase text-[10px] font-bold">LATEST 10 RECORDS</span>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+          <tbody>
+            @if (filteredHistory().length === 0) {
+              <tr>
+                <td class="p-xl text-center text-on-surface-variant uppercase tracking-widest text-xs">
+                  No movements found matching your search.
+                </td>
+              </tr>
+            } @else {
+              <tr *ngFor="let op of filteredHistory()" class="border-b border-outline-variant hover:bg-surface-container-low transition-colors">
+                <td class="p-lg">
+                  <div class="flex items-center gap-lg">
+                    <div class="w-24 h-24 border border-outline-variant flex items-center justify-center shrink-0 bg-surface-container-lowest">
+                      <img *ngIf="op.user_item?.skin?.image_url" [src]="op.user_item?.skin?.image_url" class="w-full h-auto object-contain p-1">
+                      <span *ngIf="!op.user_item?.skin?.image_url" class="material-symbols-outlined text-[48px] text-on-surface-variant" [ngClass]="op.type.toUpperCase() === 'SELL' ? 'text-error' : 'text-primary'">
+                        {{ op.type.toUpperCase() === 'SELL' ? 'arrow_outward' : 'add_circle' }}
+                      </span>
+                    </div>
+                    <div>
+                      <p class="text-headline-sm font-bold tracking-tight text-on-surface">{{ op.user_item?.skin?.name }}</p>
+                      <p class="text-label-caps font-bold text-on-surface-variant mt-1 text-sm">{{ op.type.toUpperCase() === 'SELL' ? 'SALE' : 'PURCHASE' }} • {{ formatDate(op.created_at) }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="p-lg text-right">
+                  <p class="text-headline-sm font-data-mono font-bold text-on-surface">${{ op.amount | number:'1.2-2' }}</p>
+                  @if (op.type.toUpperCase() === 'SELL') {
+                    <p class="text-sm font-bold uppercase mt-1" [ngClass]="(op.profit || 0) >= 0 ? 'text-primary' : 'text-error'">
+                      {{ (op.profit || 0) >= 0 ? '+' : '' }}${{ op.profit | number:'1.2-2' }} P/L
+                    </p>
+                  } @else {
+                    <p class="text-sm text-on-surface-variant font-bold uppercase mt-1">ORIGINAL ACQUISITION</p>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="p-md border-t border-outline-variant bg-surface-container-low">
+        <div class="flex justify-between items-center">
+          <span class="text-label-caps font-label-caps text-on-surface-variant">MONTHLY BALANCE</span>
+          <span class="text-headline-sm font-bold" [ngClass]="monthlyBalance() >= 0 ? 'text-primary' : 'text-error'">
+            {{ monthlyBalance() >= 0 ? '+' : '-' }}${{ (monthlyBalance() < 0 ? -monthlyBalance() : monthlyBalance()) | number:'1.2-2' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Transaction Modal -->
+  <div *ngIf="transactionModal()" class="fixed inset-0 z-[100] flex items-center justify-center p-md">
+    <div class="absolute inset-0 bg-on-surface/60 backdrop-blur-sm" (click)="closeTransaction()"></div>
+    <div class="relative bg-white border border-outline-variant w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+      <div class="p-md border-b border-outline-variant bg-surface-bright flex justify-between items-center">
+        <span class="text-label-caps font-label-caps text-error">Execute Sell Order</span>
+        <button (click)="closeTransaction()" class="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors">close</button>
+      </div>
+      
+      <div class="p-lg flex flex-col gap-md">
+        <div class="flex gap-md items-center">
+          <div class="w-24 h-24 bg-surface-container-low border border-outline-variant p-2 flex items-center justify-center">
+            <img [src]="transactionModal().skin?.image_url" [alt]="transactionModal().skin?.name" class="w-full h-auto object-contain">
+          </div>
+          <div>
+            <h3 class="text-headline-sm font-bold uppercase">{{ transactionModal().skin?.name }}</h3>
+            <p class="text-data-mono text-on-surface-variant text-xs mt-1">PURCHASE PRICE: ${{ transactionModal().purchase_price }}</p>
+          </div>
+        </div>
+
+        <div class="p-md bg-surface-container-low border border-outline-variant">
+          <label class="text-[10px] text-on-surface-variant font-bold uppercase block mb-1">CUSTOM SALE PRICE (USD)</label>
+          <div class="flex items-center gap-xs">
+            <span class="text-error font-bold text-lg">$</span>
+            <input type="number" [(ngModel)]="customPrice" class="bg-transparent border-none text-headline-sm font-bold text-error focus:ring-0 w-full p-0">
+          </div>
+        </div>
+
+        <div class="space-y-sm">
+          <div class="flex justify-between items-end border-b border-outline-variant pb-1">
+            <div class="flex flex-col">
+              <p class="text-[10px] text-on-surface-variant font-bold uppercase">Estimated Net Profit</p>
+              <p class="text-[9px] text-on-surface-variant opacity-70">AFTER 10% DMARKET FEE</p>
+            </div>
+            <p class="text-sm font-bold" [ngClass]="(customPrice() * 0.90 - (transactionModal()?.purchase_price || 0)) >= 0 ? 'text-primary' : 'text-error'">
+              {{ (customPrice() * 0.90 - (transactionModal()?.purchase_price || 0)) >= 0 ? '+' : '' }}${{ (customPrice() * 0.90 - (transactionModal()?.purchase_price || 0)) | number:'1.2-2' }}
+            </p>
+          </div>
+          <div class="flex justify-between items-end">
+            <p class="text-[10px] text-on-surface font-bold uppercase">Total Credit (Net)</p>
+            <p class="text-headline-sm font-bold text-on-surface">${{ (customPrice() * 0.90) | number:'1.2-2' }}</p>
+          </div>
+        </div>
+
+        <button (click)="confirmSell()" class="w-full bg-error text-on-error py-md font-label-caps text-center hover:opacity-90 transition-all active:scale-[0.99] flex items-center justify-center gap-sm">
+          <span class="material-symbols-outlined text-[20px]">sell</span>
+          CONFIRM SALE
+        </button>
+      </div>
+      
+      <div class="px-md py-xs bg-surface border-t border-outline-variant text-[9px] text-on-surface-variant font-data-mono flex justify-between opacity-50 uppercase">
+        <span>STATUS: READY_FOR_SETTLEMENT</span>
+        <span>NODE: CS_INVENTORY_V1</span>
+      </div>
+    </div>
+  </div>
+</main>
