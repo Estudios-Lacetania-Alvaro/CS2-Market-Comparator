@@ -26,11 +26,6 @@ class OperationController extends Controller
 
         $user = $request->user();
 
-        // Verificació de liquiditat: comprovem si l'usuari té prous diners
-        if ($user->balance < $request->price) {
-            return response()->json(['message' => 'Saldo insuficient per realitzar la compra'], 400);
-        }
-
         // Creació de l'actiu a l'inventari (es guarda com a 'owned' per defecte)
         $userItem = UserItem::create([
             'user_id'        => $user->id,
@@ -49,8 +44,9 @@ class OperationController extends Controller
             'date'         => Carbon::now()
         ]);
 
-        // Deducció del saldo de l'usuari a la base de dades
-        $user->decrement('balance', $request->price);
+        // Deducció i redondeig del saldo de l'usuari
+        $user->balance = round($user->balance - $request->price, 2);
+        $user->save();
 
         return response()->json([
             'message'        => 'Compra registrada correctament',
@@ -93,8 +89,9 @@ class OperationController extends Controller
             'date'         => Carbon::now()
         ]);
 
-        // Increment del saldo de l'usuari amb els diners guanyats
-        $user->increment('balance', $request->sell_price);
+        // Actualització del saldo amb redondeig (moneda de 2 decimals)
+        $user->balance = round($user->balance + $request->sell_price, 2);
+        $user->save();
 
         return response()->json([
             'message'     => 'Venda registrada correctament',
