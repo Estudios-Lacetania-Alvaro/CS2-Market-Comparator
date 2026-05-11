@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/operations/sell/{inventory_id}', [OperationController::class, 'sell']);
     Route::get('/user/inventory', [OperationController::class, 'inventory']);
     Route::get('/user/operations-history', [OperationController::class, 'history']);
+    Route::get('/user/portfolio-stats', [OperationController::class, 'portfolioStats']);
 });
 
 // Rutas para la escena Pro (Proxy interno para evitar CORS)
