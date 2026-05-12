@@ -81,27 +81,4 @@ class MarketController extends Controller
             ]
         ]);
     }
-
-    /**
-     * Obtenció d'ofertes individuals de DMarket comparades amb el preu base de Steam.
-     */ 
-    public function getDMarketItems()
-    {
-        // Es recuperen els ítems de DMarket carregant la informació de la skin base (Steam)
-        $offers = DMarketItem::with('skin')->get()->map(function ($item) {
-            $steamPrice = $item->skin->steam_price;
-            $profit = $steamPrice ? round((($steamPrice - $item->price) / $item->price) * 100, 2) : 0;
-
-            return [
-                'name' => $item->skin->name,
-                'dmarket_price' => $item->price,
-                'steam_reference' => $steamPrice,
-                'float' => $item->float_value,
-                'profit_margin' => $profit,
-                'link' => "https://dmarket.com/ingame-items/item-id/" . $item->item_id
-            ];
-        });
-
-        return response()->json(['success' => true, 'data' => $offers]);
-    }
 }
