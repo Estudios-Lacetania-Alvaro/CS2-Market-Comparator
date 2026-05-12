@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Skin;
 use App\Models\DMarketItem;
+use App\Models\PriceHistory;
 
 class MarketController extends Controller
 {
@@ -55,7 +56,7 @@ class MarketController extends Controller
     public function getSkinDetail($id)
     {
         // Localització del registre per identificador únic o gestió de resposta 404
-        $skin = Skin::find($id);
+        $skin = Skin::findOrFail($id);
 
         if (!$skin) {
             return response()->json([
@@ -64,20 +65,37 @@ class MarketController extends Controller
             ], 404);
         }
 
+        $historicalData = PriceHistory::where('skin_id', $id)
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'timestamp'     => $item->created_at->format('Y-m-d H:i'),
+                    'steam_price'   => (float) $item->steam_price,
+                    'dmarket_price' => (float) $item->dmarket_price,
+                ];
+            });
+
         // Estimació de comissions per plataforma (15% Steam / 3% DMarket)
         $steamFee = $skin->steam_price ? ($skin->steam_price * 0.15) : 0;
         $dmarketFee = $skin->dmarket_price ? ($skin->dmarket_price * 0.03) : 0;
 
+        // Resposta
         return response()->json([
             'success' => true,
             'data' => [
                 'id' => $skin->id,
                 'name' => $skin->name,
+                'image_url' => $skin->image_url,
+                'prices' => [
+                    'steam_price' => (float) $skin->steam_price,
+                    'dmarket_price' => (float) $skin->dmarket_price,
+                ],
                 'fees' => [
                     'steam_fee' => round($steamFee, 2),
                     'dmarket_fee' => round($dmarketFee, 2)
                 ],
-                'historical_data' => [] // Espai reservat per a futures implementacions de dades històriques
+                'historical_data' => $historicalData
             ]
         ]);
     }
