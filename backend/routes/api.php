@@ -40,6 +40,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/stats/realized-profit', [StatsController::class, 'realizedProfitChart']);
     Route::get('/stats/skin-evolution/{skin_id}', [StatsController::class, 'skinPriceEvolution']);
     Route::get('/stats/activity-summary', [StatsController::class, 'userActivitySummary']);
+
+    // --- RUTES FASE 7: IA DE RECOMANACIONS ---
+    Route::get('/ai/recommendations', [AiController::class, 'getRecommendations']);
 });
 
 // Rutas para la escena Pro (Proxy interno para evitar CORS)
