@@ -38,7 +38,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // --- RUTES FASE 6: SISTEMA D'ESTADÍSTIQUES ---
     Route::get('/stats/realized-profit', [StatsController::class, 'realizedProfitChart']);
-    Route::get('/stats/skin-evolution/{skin_id}', [StatsController::class, 'skinPriceEvolution']);
     Route::get('/stats/activity-summary', [StatsController::class, 'userActivitySummary']);
 
     // --- RUTES FASE 7: IA DE RECOMANACIONS ---

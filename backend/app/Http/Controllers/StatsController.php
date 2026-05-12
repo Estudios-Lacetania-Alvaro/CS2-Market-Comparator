@@ -55,34 +55,6 @@ class StatsController extends Controller
     }
 
     /**
-     * Retorna l'historial temporal de preus (lowest price) d'una skin específica.
-     * Ideal per dibuixar gràfiques d'estil "Borsa" comparant Steam vs DMarket.
-     */
-    public function skinPriceEvolution($skin_id)
-    {
-        // Validem que la skin existeixi abans de processar l'historial
-        $skin = Skin::findOrFail($skin_id);
-
-        // Recuperem els punts històrics ordenats cronològicament
-        $history = PriceHistory::where('skin_id', $skin_id)
-                            ->orderBy('created_at', 'asc')
-                            ->get()
-                            ->map(function ($item) {
-                                return [
-                                    // Format net per a les llibreries de gràfiques de JavaScript
-                                    'timestamp'     => $item->created_at->format('Y-m-d H:i'),
-                                    'steam_price'   => (float) $item->steam_price,
-                                    'dmarket_price' => (float) $item->dmarket_price,
-                                ];
-                            });
-        
-        return response()->json([
-            'skin_name'   => $skin->name,
-            'data_points' => $history
-        ], 200);
-    }
-
-    /**
      * Genera un sumari de l'activitat transaccional de l'usuari (volum d'operacions).
      */
     public function userActivitySummary(Request $request)
