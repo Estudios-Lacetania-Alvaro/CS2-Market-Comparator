@@ -35,6 +35,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/inventory', [OperationController::class, 'inventory']);
     Route::get('/user/operations-history', [OperationController::class, 'history']);
     Route::get('/user/portfolio-stats', [OperationController::class, 'portfolioStats']);
+
+    // --- RUTES FASE 6: SISTEMA D'ESTADÍSTIQUES ---
+    Route::get('/stats/realized-profit', [StatsController::class, 'realizedProfitChart']);
+    Route::get('/stats/skin-evolution/{skin_id}', [StatsController::class, 'skinPriceEvolution']);
+    Route::get('/stats/activity-summary', [StatsController::class, 'userActivitySummary']);
+
+    // --- RUTES FASE 7: IA DE RECOMANACIONS ---
+    Route::get('/ai/recommendations', [AiController::class, 'getRecommendations']);
 });
 
 // Rutas para la escena Pro (Proxy interno para evitar CORS)
@@ -46,4 +54,3 @@ Route::get('/pro/players', [ProStatsController::class, 'getPlayerStats']);
 // Aquestes rutes proporcionen la informació necessària per a la interfície del frontend
 Route::get('/market/skins', [MarketController::class, 'getMarketSkins']);
 Route::get('/market/skins/{id}', [MarketController::class, 'getSkinDetail']);
-Route::get('/market/dmarket-items', [MarketController::class, 'getDMarketItems']);
