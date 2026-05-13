@@ -16,5 +16,6 @@ export const routes: Routes = [
   { path: 'skin/:id', loadComponent: () => import('./pages/skin-detail/skin-detail').then(m => m.SkinDetail) },
   { path: 'inventory', loadComponent: () => import('./pages/inventory/inventory').then(m => m.Inventory), canActivate: [authGuard] },
   { path: 'charts', loadComponent: () => import('./pages/charts/charts').then(m => m.Charts), canActivate: [authGuard] },
-  { path: '', redirectTo: '/home', pathMatch: 'full' }
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: '**', loadComponent: () => import('./pages/not-found/not-found').then(m => m.NotFound) }
 ];
