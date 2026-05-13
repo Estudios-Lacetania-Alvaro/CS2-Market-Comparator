@@ -86,11 +86,9 @@ class MarketController extends Controller
             'data' => [
                 'id' => $skin->id,
                 'name' => $skin->name,
-                'image_url' => $skin->image_url,
-                'prices' => [
-                    'steam_price' => (float) $skin->steam_price,
-                    'dmarket_price' => (float) $skin->dmarket_price,
-                ],
+                'image' => $skin->image_url,
+                'steam_price' => $skin->steam_price,
+                'dmarket_price' => $skin->dmarket_price,
                 'fees' => [
                     'steam_fee' => round($steamFee, 2),
                     'dmarket_fee' => round($dmarketFee, 2)

@@ -13,6 +13,7 @@ export const routes: Routes = [
   { path: 'register', component: Register },
   { path: 'profile', component: Profile, canActivate: [authGuard] },
   { path: 'market', component: Market },
+  { path: 'skin/:id', loadComponent: () => import('./pages/skin-detail/skin-detail').then(m => m.SkinDetail) },
   { path: 'inventory', loadComponent: () => import('./pages/inventory/inventory').then(m => m.Inventory), canActivate: [authGuard] },
   { path: 'charts', loadComponent: () => import('./pages/charts/charts').then(m => m.Charts), canActivate: [authGuard] },
   { path: '', redirectTo: '/home', pathMatch: 'full' }

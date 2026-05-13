@@ -1,7 +1,7 @@
 .grid-hairline {
     display: grid;
     gap: 1px;
-    background-color: #dfecd8; /* Matches outline-variant */
+    background-color: #dfecd8; 
 }
 
 .cell-bg {

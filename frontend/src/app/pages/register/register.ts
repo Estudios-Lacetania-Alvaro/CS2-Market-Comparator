@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
+import { Router } from '@angular/router';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-register',
@@ -14,7 +16,11 @@ export class Register {
   password:string = "";
   password_confirmation:string = "";
 
-  constructor(private authService:AuthService){}
+  constructor(
+    private authService:AuthService,
+    private router: Router,
+    private notify: NotificationService
+  ){}
 
   register(){
     const data = {
@@ -24,8 +30,14 @@ export class Register {
       password_confirmation: this.password_confirmation
     }
 
-    this.authService.register(data).subscribe(res => {
-      console.log(res)
-    })
+    this.authService.register(data).subscribe({
+      next: (res: any) => {
+        this.notify.show('Account created successfully!', 'success');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        this.notify.show(err.error?.message || 'Registration failed. Please try again.', 'error');
+      }
+    });
   }
 }

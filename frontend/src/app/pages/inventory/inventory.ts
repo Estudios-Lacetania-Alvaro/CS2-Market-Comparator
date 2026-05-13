@@ -3,6 +3,7 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { InventoryService } from '../../services/inventory.service';
 import { AuthService } from '../../services/auth';
 import { FormsModule } from '@angular/forms';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-inventory',
@@ -14,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 export class Inventory implements OnInit {
   private inventoryService = inject(InventoryService);
   private authService = inject(AuthService);
+  private notify = inject(NotificationService);
 
   inventory = signal<any[]>([]);
   history = signal<any[]>([]);
@@ -135,13 +137,13 @@ export class Inventory implements OnInit {
 
     this.inventoryService.sellSkin(item.id, this.customPrice()).subscribe({
       next: (res: any) => {
-        alert(`TRANSACTION SUCCESSFUL\nProfit: $${res.profit.toFixed(2)}\nNew Balance: $${res.new_balance.toFixed(2)}`);
+        this.notify.show(`TRANSACTION SUCCESSFUL: Profit $${res.profit.toFixed(2)}`, 'success');
         this.authService.fetchUser().subscribe();
         this.closeTransaction();
         this.fetchData();
       },
       error: (err) => {
-        alert(err.error?.message || 'Transaction failed');
+        this.notify.show(err.error?.message || 'Transaction failed', 'error');
       }
     });
   }

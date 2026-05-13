@@ -1,0 +1,86 @@
+<div class="min-h-screen bg-surface p-lg space-y-lg">
+  <!-- Header -->
+  <div class="flex justify-between items-end border-b border-outline-variant pb-md">
+    <div>
+      <h1 class="text-headline-md font-bold text-on-surface uppercase tracking-tighter">PERFORMANCE ANALYTICS</h1>
+    </div>
+    <div class="flex gap-xs">
+        <button (click)="setPeriod('week')" [class.bg-primary]="period() === 'week'" [class.text-on-primary]="period() === 'week'" class="px-md py-xs border border-outline-variant text-[10px] font-bold uppercase transition-all">Week</button>
+        <button (click)="setPeriod('month')" [class.bg-primary]="period() === 'month'" [class.text-on-primary]="period() === 'month'" class="px-md py-xs border border-outline-variant text-[10px] font-bold uppercase transition-all">Month</button>
+        <button (click)="setPeriod('year')" [class.bg-primary]="period() === 'year'" [class.text-on-primary]="period() === 'year'" class="px-md py-xs border border-outline-variant text-[10px] font-bold uppercase transition-all">Year</button>
+        <button (click)="setPeriod('all')" [class.bg-primary]="period() === 'all'" [class.text-on-primary]="period() === 'all'" class="px-md py-xs border border-outline-variant text-[10px] font-bold uppercase transition-all">All</button>
+    </div>
+  </div>
+
+  <!-- Activity Summary Widgets (Compact Row) -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-lg">
+    <div class="bg-surface-container-lowest border border-outline-variant p-md shadow-sm rounded-DEFAULT flex items-center gap-md">
+      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+        <span class="material-symbols-outlined">shopping_cart</span>
+      </div>
+      <div>
+        <p class="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest">Acquisitions</p>
+        <p class="text-xl font-data-mono font-bold">{{ summary()?.total_buys || 0 }}</p>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest border border-outline-variant p-md shadow-sm rounded-DEFAULT flex items-center gap-md">
+      <div class="w-12 h-12 rounded-full bg-error/10 flex items-center justify-center text-error">
+        <span class="material-symbols-outlined">sell</span>
+      </div>
+      <div>
+        <p class="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest">Liquidations</p>
+        <p class="text-xl font-data-mono font-bold">{{ summary()?.total_sells || 0 }}</p>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest border border-outline-variant p-md shadow-sm rounded-DEFAULT flex items-center gap-md">
+      <div class="w-12 h-12 rounded-full bg-on-surface/5 flex items-center justify-center text-on-surface">
+        <span class="material-symbols-outlined">query_stats</span>
+      </div>
+      <div>
+        <p class="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest">Total Ops</p>
+        <p class="text-xl font-data-mono font-bold">{{ summary()?.total_operations || 0 }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROI Chart Section (More compact in height, but part of a list) -->
+  <div class="space-y-lg">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-sm overflow-hidden">
+      <div class="px-lg py-md border-b border-outline-variant flex justify-between items-center bg-surface-container-low/30">
+        <h2 class="text-[11px] font-bold uppercase flex items-center gap-xs tracking-widest">
+          <span class="material-symbols-outlined text-[16px]">timeline</span>
+          Net Profit Evolution (ROI)
+        </h2>
+        <div class="flex gap-2">
+            <div class="flex items-center gap-1">
+                <div class="w-2 h-2 rounded-full bg-primary"></div>
+                <span class="text-[8px] font-bold uppercase opacity-60">Profit</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <div class="w-2 h-2 rounded-full bg-error"></div>
+                <span class="text-[8px] font-bold uppercase opacity-60">Loss</span>
+            </div>
+        </div>
+      </div>
+
+      <div class="p-lg">
+        <div class="relative h-[650px] w-full">
+          @if (loading()) {
+            <div class="absolute inset-0 flex items-center justify-center bg-surface-container-lowest/80 backdrop-blur-sm z-10">
+              <div class="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          }
+          
+          <canvas #profitChart></canvas>
+
+          @if (!loading() && profitData.length === 0) {
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant opacity-40">No historical data found</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+</div>

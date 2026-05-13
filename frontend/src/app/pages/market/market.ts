@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { MarketService } from '../../services/market.service';
 import { AuthService } from '../../services/auth';
 import { InventoryService } from '../../services/inventory.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-market',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './market.html',
   styleUrls: ['./market.css']
 })
@@ -18,6 +19,7 @@ export class Market implements OnInit {
   private authService = inject(AuthService);
   private inventoryService = inject(InventoryService);
   private router = inject(Router);
+  private notify = inject(NotificationService);
 
   skins = signal<any[]>([]);
   loading = signal<boolean>(true);
@@ -169,32 +171,19 @@ export class Market implements OnInit {
     this.transactionModal.set(null);
   }
 
-  onSell(skin: any) {
-    if (!this.authService.getUser()()) {
-      alert('Please login to sell items.');
-      return;
-    }
-    
-    // Simplicamos: Redirigimos al inventario con un parámetro de búsqueda
-    // para que el usuario pueda encontrar su ítem fácilmente.
-    alert(`Redirecting to your inventory to sell ${skin.name}...`);
-    // Redirigimos al inventario
-    this.router.navigate(['/inventory']);
-  }
-
   confirmBuy() {
     const skin = this.transactionModal();
     if (!skin) return;
 
     this.marketService.buySkin(skin.id, this.customPrice()).subscribe({
       next: (res: any) => {
-        alert(`TRANSACTION SUCCESSFUL\nItem: ${skin.name}\nPurchase Price: $${this.customPrice()}\nRemaining Balance: $${res.new_balance.toFixed(2)}`);
+        this.notify.show(`PURCHASE SUCCESSFUL: ${skin.name}`, 'success');
         this.authService.fetchUser().subscribe();
         this.closeTransaction();
         this.fetchData();
       },
       error: (err) => {
-        alert(err.error?.message || 'Transaction failed');
+        this.notify.show(err.error?.message || 'Transaction failed', 'error');
       }
     });
   }

@@ -133,8 +133,7 @@
               <th class="p-xs font-normal border-r border-outline-variant w-28 text-center uppercase">STEAM</th>
               <th class="p-xs font-normal border-r border-outline-variant w-28 text-center uppercase">FEE (10%)</th>
               <th class="p-xs font-normal border-r border-outline-variant w-28 text-center uppercase">NET PROFIT</th>
-              <th class="p-xs font-normal border-r border-outline-variant w-24 text-center uppercase">BUY</th>
-              <th class="p-xs font-normal w-24 text-center uppercase">SELL</th>
+              <th class="p-xs font-normal w-24 text-center uppercase">BUY</th>
             </tr>
           </thead>
           <tbody class="text-data-mono font-data-mono">
@@ -146,7 +145,7 @@
                      class="object-contain inline-block border border-outline-variant w-32 h-32 bg-surface hover:scale-[2] hover:shadow-2xl transition-all duration-300 cursor-zoom-in relative z-10 hover:z-50 origin-center" />
               </td>
               <td class="p-xs border-r border-outline-variant py-sm">
-                <div class="text-on-surface font-bold" [title]="skin.name">{{ skin.name }}</div>
+                <a [routerLink]="['/skin', skin.id]" class="text-on-surface font-bold hover:text-primary transition-colors cursor-pointer" [title]="skin.name">{{ skin.name }}</a>
                 <div class="text-[10px] text-on-surface-variant mt-1 uppercase">{{ skin.recommendation || 'Verified Asset' }}</div>
               </td>
               <td class="p-xs border-r border-outline-variant py-sm text-center font-bold text-on-surface">
@@ -161,11 +160,8 @@
               <td class="p-xs border-r border-outline-variant py-sm text-center font-bold"
                   [ngClass]="skin.net_profit_usd > 0 ? 'text-primary' : 'text-error'"> {{ skin.net_profit_usd > 0 ? '+' : '' }}${{ skin.net_profit_usd }}
               </td>
-              <td class="p-xs border-r border-outline-variant text-center py-sm">
-                <button (click)="onBuy(skin)" class="material-symbols-outlined bg-primary text-on-primary p-1 hover:bg-on-primary-fixed-variant transition-all text-[18px] rounded-DEFAULT active:scale-95">shopping_cart</button>
-              </td>
               <td class="p-xs text-center py-sm">
-                <button (click)="onSell(skin)" class="material-symbols-outlined bg-error text-on-error p-1 hover:opacity-80 transition-all text-[18px] rounded-DEFAULT active:scale-95">sell</button>
+                <button (click)="onBuy(skin)" class="material-symbols-outlined bg-primary text-on-primary p-1 hover:bg-on-primary-fixed-variant transition-all text-[18px] rounded-DEFAULT active:scale-95">shopping_cart</button>
               </td>
             </tr>
           </tbody>

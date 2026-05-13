@@ -25,4 +25,8 @@ export class MarketService {
   sellSkin(inventoryId: number, sellPrice: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/operations/sell/${inventoryId}`, { sell_price: sellPrice });
   }
+
+  getSkinDetail(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/market/skins/${id}`);
+  }
 }

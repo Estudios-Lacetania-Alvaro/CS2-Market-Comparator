@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-profile',
@@ -14,6 +15,7 @@ import { Router } from '@angular/router';
 export class Profile implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private notify = inject(NotificationService);
 
   // Usamos un objeto local para el formulario para evitar que el effect lo sobrescriba
   user = signal<any>({
@@ -45,13 +47,11 @@ export class Profile implements OnInit {
 
     this.authService.updateUser(updateData).subscribe({
       next: (response: any) => {
-        alert('Profile updated successfully');
+        this.notify.show('Profile updated successfully!', 'success');
       },
       error: (err) => {
-        console.error('Error updating profile', err);
-        // Mostramos el mensaje de error real para saber qué falla (ej: email duplicado)
         const msg = err.error?.message || 'Error updating profile';
-        alert(msg);
+        this.notify.show(msg, 'error');
       }
     });
   }
