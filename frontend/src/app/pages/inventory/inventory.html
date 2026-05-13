@@ -37,8 +37,8 @@
         
         <div class="grid-hairline grid-cols-1 md:grid-cols-2">
           @if (loading()) {
-            <div class="col-span-full p-xl text-center text-on-surface-variant animate-pulse uppercase tracking-widest text-xs">
-              Synchronizing inventory with global network...
+            <div class="col-span-full p-xl flex justify-center items-center min-h-[300px]">
+              <app-loading-spinner />
             </div>
           } @else if (inventory().length === 0) {
             <div class="col-span-full p-xl text-center text-on-surface-variant uppercase tracking-widest text-xs">

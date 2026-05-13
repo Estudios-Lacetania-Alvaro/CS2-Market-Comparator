@@ -2,11 +2,12 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CsapiService } from '../../services/csapi.service';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, LoadingSpinnerComponent],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })

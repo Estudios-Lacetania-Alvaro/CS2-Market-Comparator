@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MarketController;
 use App\Http\Controllers\ProStatsController;
 use App\Http\Controllers\OperationController;
+use App\Http\Controllers\StatsController;
+use App\Http\Controllers\AiController;
 
 /*
 |--------------------------------------------------------------------------

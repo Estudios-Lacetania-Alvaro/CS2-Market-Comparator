@@ -3,11 +3,12 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MarketService } from '../../services/market.service';
 import Chart from 'chart.js/auto';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-skin-detail',
   standalone: true,
-  imports: [CommonModule, DecimalPipe, RouterModule],
+  imports: [CommonModule, DecimalPipe, RouterModule, LoadingSpinnerComponent],
   templateUrl: './skin-detail.html',
   styleUrls: ['./skin-detail.css']
 })

@@ -119,8 +119,7 @@
   <div class="col-span-12 md:col-span-9 bg-surface-container-lowest p-md border-l border-outline-variant relative">
     @if (loading()) {
       <div class="flex flex-col items-center justify-center py-xl gap-md">
-        <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        <span class="text-label-caps font-label-caps text-on-surface-variant animate-pulse">SYNCHRONIZING GLOBAL MARKETS...</span>
+        <app-loading-spinner />
       </div>
     } @else {
       <div class="overflow-x-visible">
@@ -142,7 +141,7 @@
               <td class="p-xs border-r border-outline-variant text-center py-sm relative">
                 <img [src]="skin.image" [alt]="skin.name" 
                      (click)="openImagePreview(skin.image)"
-                     class="object-contain inline-block border border-outline-variant w-32 h-32 bg-surface hover:scale-[2] hover:shadow-2xl transition-all duration-300 cursor-zoom-in relative z-10 hover:z-50 origin-center" />
+                     class="object-contain inline-block border border-outline-variant w-32 h-32 bg-surface hover:scale-[1.5] hover:shadow-2xl transition-all duration-300 cursor-zoom-in relative z-10 hover:z-50 origin-center" />
               </td>
               <td class="p-xs border-r border-outline-variant py-sm">
                 <a [routerLink]="['/skin', skin.id]" class="text-on-surface font-bold hover:text-primary transition-colors cursor-pointer" [title]="skin.name">{{ skin.name }}</a>

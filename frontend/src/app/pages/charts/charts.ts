@@ -2,11 +2,12 @@ import { Component, OnInit, signal, inject, ViewChild, ElementRef, AfterViewInit
 import { CommonModule } from '@angular/common';
 import { StatsService } from '../../services/stats.service';
 import Chart from 'chart.js/auto';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-charts',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LoadingSpinnerComponent],
   templateUrl: './charts.html',
   styleUrls: ['./charts.css']
 })

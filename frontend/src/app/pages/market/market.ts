@@ -6,11 +6,12 @@ import { AuthService } from '../../services/auth';
 import { InventoryService } from '../../services/inventory.service';
 import { Router, RouterModule } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-market',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, LoadingSpinnerComponent],
   templateUrl: './market.html',
   styleUrls: ['./market.css']
 })

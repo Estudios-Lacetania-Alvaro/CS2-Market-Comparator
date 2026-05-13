@@ -4,11 +4,12 @@ import { InventoryService } from '../../services/inventory.service';
 import { AuthService } from '../../services/auth';
 import { FormsModule } from '@angular/forms';
 import { NotificationService } from '../../services/notification.service';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, DecimalPipe, FormsModule],
+  imports: [CommonModule, DecimalPipe, FormsModule, LoadingSpinnerComponent],
   templateUrl: './inventory.html',
   styleUrls: ['./inventory.css']
 })
