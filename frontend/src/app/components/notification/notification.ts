@@ -2,6 +2,10 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../services/notification.service';
 
+/**
+ * Component encarregat de mostrar les notificacions emergents tipus toast (èxit o error) a l'usuari.
+ * Es col·loca de manera fixa a la part superior dreta de la pantalla.
+ */
 @Component({
   selector: 'app-notification',
   standalone: true,
@@ -42,5 +46,6 @@ import { NotificationService } from '../../services/notification.service';
   `]
 })
 export class NotificationComponent {
+  // Injecció directa del servei reactiu global de notificacions
   public service = inject(NotificationService);
 }

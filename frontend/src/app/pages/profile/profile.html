@@ -1,14 +1,14 @@
-<main class="flex-grow flex flex-col items-center py-xl px-lg">
+<main class="flex-grow flex flex-col items-center py-xl px-lg animate-fade-in">
   <div class="w-full max-w-7xl flex flex-col gap-lg">
-    <!-- Page Header -->
+    <!-- Capçalera de la pàgina -->
     <div class="flex flex-col gap-base pb-sm border-b border-outline-variant">
       <h1 class="text-headline-md font-headline-md text-on-surface">Account Management</h1>
     </div>
 
-    <!-- Bento Grid Layout -->
+    <!-- Disseny de quadrícula Bento -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter bg-outline-variant border border-outline-variant">
-      <!-- Personal Info Card -->
-      <div class="bg-surface-container-lowest p-lg col-span-1 md:col-span-2 flex flex-col gap-md relative group hover:bg-surface-container-low transition-colors">
+      <!-- Targeta d'informació personal -->
+      <div class="bg-surface-container-lowest p-lg col-span-1 md:col-span-2 flex flex-col gap-md relative group hover:bg-surface-container-low transition-all duration-300 hover:shadow-md hover:-translate-y-1 animate-slide-up" style="animation-delay: 0.1s; animation-fill-mode: both;">
         <div class="absolute top-md right-md text-on-surface-variant opacity-50">
           <span class="material-symbols-outlined">person</span>
         </div>
@@ -43,47 +43,58 @@
         </div>
       </div>
 
-      <!-- Financial Integration Card -->
-      <div class="bg-surface-container-lowest p-lg col-span-1 flex flex-col justify-between hover:bg-surface-container-low transition-colors">
+      <!-- Targeta de configuració financera -->
+      <div class="bg-surface-container-lowest p-lg col-span-1 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-300 hover:shadow-md hover:-translate-y-1 animate-slide-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
         <div class="flex flex-col gap-md">
-          <div class="flex justify-between items-center">
-            <span class="text-label-caps font-label-caps text-on-surface-variant">DMARKET INTEGRATION</span>
+          <div class="flex justify-between items-center border-b border-outline-variant pb-xs">
+            <span class="text-label-caps font-label-caps text-on-surface-variant uppercase">FINANCIAL SETTINGS</span>
             <span class="material-symbols-outlined text-on-surface-variant text-[18px]">account_balance_wallet</span>
           </div>
-          <div class="flex flex-col gap-base">
+          
+          <div class="flex flex-col gap-base mt-xs">
             <span class="text-data-mono font-data-mono text-on-surface-variant uppercase">Available Balance</span>
-            <span class="text-headline-md font-headline-md text-on-surface tracking-tighter">${{ user().balance }}</span>
+            <span class="text-headline-md font-headline-md text-on-surface tracking-tighter">{{ currencyService.format(user().balance) }}</span>
           </div>
-          <div class="flex flex-col gap-base border-t border-outline-variant pt-sm">
-            <div class="flex justify-between items-center text-data-mono font-data-mono">
-              <span class="text-on-surface-variant">Locked Value</span>
-              <span class="text-on-surface">$0.00</span>
+
+          <!-- Selecció de divisa -->
+          <div class="flex flex-col gap-base border-t border-outline-variant pt-sm mt-sm">
+            <span class="text-label-caps font-label-caps text-on-surface-variant mb-xs">Currency Preference</span>
+            <div class="flex gap-sm">
+              <button (click)="changeCurrency('USD')" 
+                      [class.bg-primary]="currencyService.selectedCurrency() === 'USD'"
+                      [class.text-on-primary]="currencyService.selectedCurrency() === 'USD'"
+                      [class.bg-surface]="currencyService.selectedCurrency() !== 'USD'"
+                      class="flex-1 border border-outline-variant py-xs px-1 text-[10px] font-label-caps hover:bg-surface-container-high transition-colors uppercase text-center">
+                DOLLARS (USD)
+              </button>
+              <button (click)="changeCurrency('EUR')" 
+                      [class.bg-primary]="currencyService.selectedCurrency() === 'EUR'"
+                      [class.text-on-primary]="currencyService.selectedCurrency() === 'EUR'"
+                      [class.bg-surface]="currencyService.selectedCurrency() !== 'EUR'"
+                      class="flex-1 border border-outline-variant py-xs px-1 text-[10px] font-label-caps hover:bg-surface-container-high transition-colors uppercase text-center">
+                EUROS (EUR)
+              </button>
             </div>
-            <div class="flex justify-between items-center text-data-mono font-data-mono">
-              <span class="text-on-surface-variant">Status</span>
-              <span class="text-primary font-bold">Connected</span>
-            </div>
+            <p class="text-[9px] text-on-surface-variant italic mt-1 leading-tight">
+              * Currency conversion applies globally.
+            </p>
           </div>
         </div>
-        <button class="w-full mt-lg bg-surface text-on-surface border border-outline-variant py-xs text-label-caps font-label-caps hover:bg-primary hover:text-on-primary hover:border-primary transition-colors flex justify-center items-center gap-xs uppercase">
-          <span class="material-symbols-outlined text-[16px]">sync</span>
-          SYNC BALANCE
-        </button>
       </div>
 
-      <!-- Account Settings Section -->
-      <div class="bg-surface-container-lowest p-lg col-span-1 md:col-span-3 border-t border-outline-variant">
+      <!-- Secció de configuració del compte -->
+      <div class="bg-surface-container-lowest p-lg col-span-1 md:col-span-3 border-t border-outline-variant animate-slide-up" style="animation-delay: 0.3s; animation-fill-mode: both;">
         <div class="flex flex-col gap-lg">
           <div>
             <span class="text-label-caps font-label-caps text-on-surface-variant block mb-md uppercase">ACCOUNT SETTINGS</span>
             <form (ngSubmit)="saveProfile()" class="grid grid-cols-1 md:grid-cols-2 gap-lg">
-              <!-- Edit Full Name -->
+              <!-- Editar nom complet -->
               <div class="flex flex-col gap-base">
                 <label class="text-label-caps font-label-caps text-on-surface-variant">Full Name</label>
                 <input class="bg-surface border border-outline-variant px-sm py-xs text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all uppercase" 
                        type="text" name="name" [(ngModel)]="user().name" required />
               </div>
-              <!-- Edit Email Address -->
+              <!-- Editar adreça de correu electrònic -->
               <div class="flex flex-col gap-base">
                 <label class="text-label-caps font-label-caps text-on-surface-variant">Email Address</label>
                 <input class="bg-surface border border-outline-variant px-sm py-xs text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" 
@@ -96,31 +107,12 @@
               </div>
             </form>
           </div>
-          
-          <div class="border-t border-outline-variant pt-lg">
-            <span class="text-label-caps font-label-caps text-on-surface-variant block mb-md uppercase">CHANGE PASSWORD</span>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
-              <div class="flex flex-col gap-base">
-                <label class="text-label-caps font-label-caps text-on-surface-variant uppercase">Current Password</label>
-                <input class="bg-surface border border-outline-variant px-sm py-xs text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="••••••••" type="password" />
-              </div>
-              <div class="flex flex-col gap-base">
-                <label class="text-label-caps font-label-caps text-on-surface-variant uppercase">New Password</label>
-                <input class="bg-surface border border-outline-variant px-sm py-xs text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="••••••••" type="password" />
-              </div>
-              <div class="flex flex-col gap-base">
-                <label class="text-label-caps font-label-caps text-on-surface-variant uppercase">Confirm New Password</label>
-                <input class="bg-surface border border-outline-variant px-sm py-xs text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="••••••••" type="password" />
-              </div>
-            </div>
-            <button class="mt-md bg-surface text-on-surface border border-outline-variant px-lg py-xs text-label-caps font-label-caps hover:bg-primary hover:text-on-primary hover:border-primary transition-colors uppercase">
-              UPDATE PASSWORD
-            </button>
-          </div>
+
+
         </div>
       </div>
 
-      <!-- Session Security Card -->
+      <!-- Targeta de seguretat de la sessió -->
       <div class="bg-surface-container-lowest p-lg col-span-1 md:col-span-3 flex flex-col sm:flex-row justify-between items-center gap-md">
         <div class="flex flex-col gap-base">
           <span class="text-label-caps font-label-caps text-on-surface-variant uppercase">SESSION SECURITY</span>

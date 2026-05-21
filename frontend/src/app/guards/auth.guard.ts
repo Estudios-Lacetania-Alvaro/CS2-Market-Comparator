@@ -7,11 +7,11 @@ export const authGuard = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Verificamos si hay un usuario en el signal o si la sesión es válida
+  // Verifiquem si hi ha un usuari al signal o si la sessió és vàlida
   if (authService.getUser()()) {
     return true;
   }
 
-  // Si no, redirigimos a login
+  // Si no, redirigim a login
   return router.navigate(['/login']);
 };

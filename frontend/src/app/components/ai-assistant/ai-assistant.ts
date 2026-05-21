@@ -11,9 +11,9 @@ import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner';
   imports: [CommonModule, LoadingSpinnerComponent],
   template: `
     @if (shouldShow()) {
-      <div class="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-md font-data-mono pointer-events-none">
+      <div class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[9999] flex flex-col items-end gap-md font-data-mono pointer-events-none">
         
-        <!-- Chat Window -->
+        <!-- Finestra de xat -->
         <div 
           [class.translate-y-0]="isOpen()"
           [class.opacity-100]="isOpen()"
@@ -21,34 +21,38 @@ import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner';
           [class.translate-y-10]="!isOpen()"
           [class.opacity-0]="!isOpen()"
           [class.pointer-events-none]="!isOpen()"
-          [class.w-[450px]]="!isExpanded()"
-          [class.h-[650px]]="!isExpanded()"
-          [class.w-[80vw]]="isExpanded()"
-          [class.h-[80vh]]="isExpanded()"
+          [class.w-[calc(100vw-2rem)]]="!isExpanded()"
+          [class.sm:w-[450px]]="!isExpanded()"
+          [class.h-[75vh]]="!isExpanded()"
+          [class.sm:h-[650px]]="!isExpanded()"
+          [class.w-[95vw]]="isExpanded()"
+          [class.sm:w-[80vw]]="isExpanded()"
+          [class.h-[85vh]]="isExpanded()"
+          [class.sm:h-[80vh]]="isExpanded()"
           class="bg-white border-2 border-[#1e293b] shadow-[8px_8px_0px_0px_rgba(30,41,59,1)] flex flex-col overflow-hidden transition-all duration-300 ease-out">
           
-          <!-- Header -->
+          <!-- Capçalera -->
           <div class="bg-[#1e293b] p-md flex justify-between items-center">
             <div class="flex items-center gap-xs">
               <span class="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse"></span>
               <span class="text-sm font-bold text-white uppercase tracking-widest">Market_Analyst_AI v1.0.4</span>
             </div>
             <div class="flex items-center gap-sm">
-              <button (click)="toggleExpand()" class="text-white hover:text-[#22c55e] transition-colors" [title]="isExpanded() ? 'Reducir' : 'Ampliar'">
+              <button (click)="toggleExpand()" class="text-white hover:text-[#22c55e] transition-colors" [title]="isExpanded() ? 'Reduir' : 'Ampliar'">
                 <span class="material-symbols-outlined text-[24px]">
                   {{ isExpanded() ? 'close_fullscreen' : 'open_in_full' }}
                 </span>
               </button>
-              <button (click)="toggleChat()" class="text-white hover:text-[#22c55e] transition-colors" title="Cerrar">
+              <button (click)="toggleChat()" class="text-white hover:text-[#22c55e] transition-colors" title="Tancar">
                 <span class="material-symbols-outlined text-[24px]">close</span>
               </button>
             </div>
           </div>
 
-          <!-- Content -->
+          <!-- Contingut -->
           <div class="flex-grow overflow-y-auto p-md space-y-lg bg-[#f8fafc]">
             
-            <!-- AI Welcome Message -->
+            <!-- Missatge de benvinguda de la IA -->
             <div class="space-y-xs">
               <p class="text-xs font-bold text-slate-500 uppercase tracking-tighter">AI_CORE > SYSTEM_STATUS: READY</p>
               <div class="bg-[#e8f2e1] border border-[#1e293b] p-md text-sm leading-relaxed">
@@ -64,7 +68,7 @@ import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner';
             }
 
             @if (analysis()) {
-              <!-- General Analysis -->
+              <!-- Anàlisi general -->
               <div class="space-y-xs">
                 <p class="text-xs font-bold text-slate-500 uppercase tracking-tighter">GLOBAL_REPORT</p>
                 <div class="bg-white border border-[#1e293b] p-md text-sm leading-relaxed italic border-l-4 border-l-[#22c55e]">
@@ -72,7 +76,7 @@ import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner';
                 </div>
               </div>
 
-              <!-- Recommendations List -->
+              <!-- Llista de recomanacions -->
               <div class="space-y-md">
                 <p class="text-xs font-bold text-slate-500 uppercase tracking-tighter">TARGET_OPERATIONS ({{ analysis().recommendations.length }})</p>
                 
@@ -92,7 +96,7 @@ import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner';
             }
           </div>
 
-          <!-- Footer / Controls -->
+          <!-- Peu de pàgina / Controls -->
           <div class="p-md border-t border-slate-200 bg-white">
             <button 
               (click)="fetchAnalysis()"
@@ -104,7 +108,7 @@ import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner';
           </div>
         </div>
 
-        <!-- Toggle Button -->
+        <!-- Botó de commutació -->
         <button 
           (click)="toggleChat()"
           class="pointer-events-auto w-14 h-14 rounded-full bg-[#1e293b] border-2 border-[#1e293b] shadow-[4px_4px_0px_0px_rgba(34,197,94,1)] flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-all group">

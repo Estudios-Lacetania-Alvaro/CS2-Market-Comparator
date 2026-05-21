@@ -5,11 +5,13 @@ import { AuthService } from '../../services/auth';
 import { FormsModule } from '@angular/forms';
 import { NotificationService } from '../../services/notification.service';
 import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner';
+import { CurrencyService } from '../../services/currency.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, DecimalPipe, FormsModule, LoadingSpinnerComponent],
+  imports: [CommonModule, DecimalPipe, FormsModule, LoadingSpinnerComponent, RouterModule],
   templateUrl: './inventory.html',
   styleUrls: ['./inventory.css']
 })
@@ -17,64 +19,93 @@ export class Inventory implements OnInit {
   private inventoryService = inject(InventoryService);
   private authService = inject(AuthService);
   private notify = inject(NotificationService);
+  public currencyService = inject(CurrencyService);
 
   inventory = signal<any[]>([]);
   history = signal<any[]>([]);
   loading = signal<boolean>(true);
   user = this.authService.currentUser;
 
-  // Transaction Modal
+  // Modal de transacció
   transactionModal = signal<any | null>(null);
   customPrice = signal<number>(0);
 
-  // Pagination
+  // Cerca i paginació de l'inventari
+  inventorySearch = signal<string>('');
   currentPage = signal<number>(1);
   pageSize = signal<number>(10);
+  
+  filteredInventory = computed(() => {
+    const query = this.inventorySearch().toLowerCase();
+    let filtered = this.inventory();
+    if (query) {
+      filtered = filtered.filter(item => item.skin?.name.toLowerCase().includes(query));
+    }
+    return filtered;
+  });
+
   paginatedInventory = computed(() => {
     const start = (this.currentPage() - 1) * this.pageSize();
     const end = start + this.pageSize();
-    return this.inventory().slice(start, end);
+    return this.filteredInventory().slice(start, end);
   });
-  totalPages = computed(() => Math.ceil(this.inventory().length / this.pageSize()));
+  totalPages = computed(() => Math.ceil(this.filteredInventory().length / this.pageSize()) || 1);
 
-  // History Search & Tabs
+  // Cerca i pestanyes de l'historial
   historySearch = signal<string>('');
   currentTab = signal<string>('GENERAL');
 
-  filteredHistory = computed(() => {
+  // Paginació de l'historial
+  historyCurrentPage = signal<number>(1);
+  historyPageSize = signal<number>(10);
+
+  filteredHistoryFull = computed(() => {
     const query = this.historySearch().toLowerCase();
     const tab = this.currentTab();
     
     let filtered = this.history();
     
-    // Filter by Tab
+    // Filtrar per pestanya
     if (tab === 'PURCHASES') {
       filtered = filtered.filter(op => op.type.toUpperCase() === 'BUY');
     } else if (tab === 'SALES') {
       filtered = filtered.filter(op => op.type.toUpperCase() === 'SELL');
     }
 
-    // Filter by Search
-    filtered = filtered.filter(op => 
-      op.skin?.name.toLowerCase().includes(query) || 
-      op.type.toLowerCase().includes(query)
-    );
+    // Filtrar per cerca
+    if (query) {
+      filtered = filtered.filter(op => {
+        const skinName = (op.user_item?.skin?.name || op.userItem?.skin?.name || '').toLowerCase();
+        const typeStr = (op.type || '').toLowerCase();
+        return skinName.includes(query) || typeStr.includes(query);
+      });
+    }
     
-    return filtered.slice(0, 10);
+    return filtered;
   });
 
-  // Stats
+  filteredHistory = computed(() => {
+    const start = (this.historyCurrentPage() - 1) * this.historyPageSize();
+    const end = start + this.historyPageSize();
+    return this.filteredHistoryFull().slice(start, end);
+  });
+
+  historyTotalPages = computed(() => Math.ceil(this.filteredHistoryFull().length / this.historyPageSize()) || 1);
+
+  // Estadístiques
   totalInvested = computed(() => {
-    return this.inventory().reduce((acc, item) => acc + (item.purchase_price || 0), 0);
+    return this.inventory().reduce((acc, item) => acc + (Number(item.purchase_price) || 0), 0);
   });
 
   currentValue = computed(() => {
-    return this.inventory().reduce((acc, item) => acc + (item.skin?.steam_price || 0), 0);
+    return this.inventory().reduce((acc, item) => acc + (Number(item.skin?.steam_price) || 0), 0);
   });
 
   roi = computed(() => {
-    if (this.totalInvested() === 0) return 0;
-    return ((this.currentValue() - this.totalInvested()) / this.totalInvested()) * 100;
+    const invested = Number(this.totalInvested()) || 0;
+    const current = Number(this.currentValue()) || 0;
+    if (invested === 0) return 0;
+    return ((current - invested) / invested) * 100;
   });
 
   monthlyBalance = computed(() => {
@@ -89,7 +120,7 @@ export class Inventory implements OnInit {
                opDate.getMonth() === currentMonth && 
                opDate.getFullYear() === currentYear;
       })
-      .reduce((acc, op) => acc + (op.profit || 0), 0);
+      .reduce((acc, op) => acc + (Number(op.profit) || 0), 0);
   });
 
   constructor() {}
@@ -138,7 +169,7 @@ export class Inventory implements OnInit {
 
     this.inventoryService.sellSkin(item.id, this.customPrice()).subscribe({
       next: (res: any) => {
-        this.notify.show(`TRANSACTION SUCCESSFUL: Profit $${res.profit.toFixed(2)}`, 'success');
+        this.notify.show(`TRANSACTION SUCCESSFUL: Profit ${this.currencyService.format(res.profit)}`, 'success');
         this.authService.fetchUser().subscribe();
         this.closeTransaction();
         this.fetchData();

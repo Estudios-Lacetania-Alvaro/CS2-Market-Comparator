@@ -6,18 +6,21 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class InventoryService {
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = '/api';
 
   constructor(private http: HttpClient) {}
 
+  // Obtenir l'inventari actual de l'usuari autenticat
   getInventory(): Observable<any> {
     return this.http.get(`${this.apiUrl}/user/inventory`);
   }
 
+  // Obtenir l'historial de transaccions i moviments de l'usuari
   getOperationsHistory(): Observable<any> {
     return this.http.get(`${this.apiUrl}/user/operations-history`);
   }
 
+  // Posar a la venda un skin de l'inventari de l'usuari
   sellSkin(inventoryId: number, sellPrice: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/operations/sell/${inventoryId}`, { sell_price: sellPrice });
   }

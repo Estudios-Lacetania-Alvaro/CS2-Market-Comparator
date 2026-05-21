@@ -1,6 +1,10 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+/**
+ * Component de la pantalla de càrrega.
+ * Selecciona de forma aleatòria un GIF de càrrega de CS:GO per oferir una experiència de disseny completament immersiva i prèmium.
+ */
 @Component({
   selector: 'app-loading-spinner',
   standalone: true,
@@ -15,6 +19,7 @@ import { CommonModule } from '@angular/common';
   `
 })
 export class LoadingSpinnerComponent implements OnInit {
+  // Llista de GIFs de càrrega oficials/clàssics de CS:GO utilitzats per a la rotació aleatòria
   loadingGifs = [
     '/csgo_carga.gif',
     '/csgo_carga2.gif',
@@ -22,9 +27,11 @@ export class LoadingSpinnerComponent implements OnInit {
     '/csgo_carga4.gif',
     '/csgo_carga5.gif'
   ];
+  // Signal de la imatge de càrrega activa
   currentGif = signal(this.loadingGifs[0]);
 
   ngOnInit() {
+    // Escollim de forma completament aleatòria un dels GIFs definits a la llista
     const randomIndex = Math.floor(Math.random() * this.loadingGifs.length);
     this.currentGif.set(this.loadingGifs[randomIndex]);
   }

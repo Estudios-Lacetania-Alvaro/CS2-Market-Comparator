@@ -19,7 +19,7 @@ export class NotificationService {
     
     this.notifications.update(prev => [...prev, newNotification]);
 
-    // Auto-remove after 5 seconds
+    // Auto-eliminació després de 5 segons
     setTimeout(() => {
       this.remove(id);
     }, 5000);

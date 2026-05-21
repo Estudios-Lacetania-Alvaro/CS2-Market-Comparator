@@ -1,245 +1,357 @@
-<main class="flex-grow w-full grid grid-cols-12 gap-gutter bg-outline-variant p-md">
-  <!-- Header & Controls -->
+<main
+  class="flex-grow w-full grid grid-cols-1 md:grid-cols-12 gap-gutter bg-outline-variant p-2 md:p-md animate-fade-in">
+  <!-- Capçalera i controls -->
   <div class="col-span-12 bg-surface-container-lowest p-md">
     <div class="flex justify-between items-end border-b border-outline-variant pb-md">
       <div>
         <h1 class="text-headline-md font-headline-md text-on-surface mb-xs uppercase">ARBITRAGE SCANNER</h1>
       </div>
     </div>
-    
-    <!-- Quick Stats (Reduced to 3 columns) -->
-    <div class="grid grid-cols-3 gap-gutter bg-outline-variant border border-outline-variant mt-md">
-      <div class="bg-surface-container-lowest p-md">
+
+    <!-- Estadístiques ràpides (Responsive) -->
+    <div
+      class="grid grid-cols-1 md:grid-cols-3 gap-gutter bg-outline-variant border border-outline-variant mt-md animate-slide-up"
+      style="animation-delay: 0.1s; animation-fill-mode: both;">
+      <div
+        class="bg-surface-container-lowest p-md border-b md:border-b-0 md:border-r border-outline-variant text-center md:text-left">
         <span class="text-label-caps font-label-caps text-on-surface-variant block mb-xs">ACTIVE LISTINGS</span>
         <span class="text-data-mono font-data-mono text-xl">{{ totalListings() }}</span>
       </div>
-      <div class="bg-surface-container-lowest p-md">
+      <div
+        class="bg-surface-container-lowest p-md border-b md:border-b-0 md:border-r border-outline-variant text-center md:text-left">
         <span class="text-label-caps font-label-caps text-on-surface-variant block mb-xs">PROFITABLE OPS (>$5)</span>
         <span class="text-data-mono font-data-mono text-xl text-primary">{{ profitableOps() }}</span>
       </div>
-      <div class="bg-surface-container-lowest p-md flex items-center justify-center p-0">
-        <button (click)="fetchData()" class="bg-primary text-on-primary w-full h-full text-label-caps font-label-caps tracking-widest hover:bg-primary-fixed-variant transition-colors min-h-[64px] font-bold">
+      <div class="bg-surface-container-lowest flex items-center justify-center p-0">
+        <button (click)="fetchData(true)"
+          class="bg-primary text-on-primary w-full h-full text-label-caps font-label-caps tracking-widest hover:bg-on-surface hover:text-surface-container-lowest transition-all min-h-[64px] font-bold">
           REFRESH DATA
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Filter Sidebar -->
-  <div class="col-span-12 md:col-span-3 bg-surface-container-lowest p-md">
+  <!-- Barra lateral de filtres -->
+  <div class="col-span-12 md:col-span-3 bg-surface-container-lowest p-md animate-slide-up"
+    style="animation-delay: 0.2s; animation-fill-mode: both;">
     <h2 class="text-label-caps font-label-caps border-b border-outline-variant pb-xs mb-md uppercase">PARAMETERS</h2>
     <div class="space-y-md">
       <div>
-        <label class="text-label-caps font-label-caps text-on-surface-variant block mb-xs uppercase">SEARCH SKINS</label>
+        <label class="text-label-caps font-label-caps text-on-surface-variant block mb-xs uppercase">SEARCH
+          SKINS</label>
         <div class="relative">
-          <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
-          <input type="text" [(ngModel)]="searchQuery" placeholder="SKIN NAME..." 
-                 class="w-full pl-10 pr-sm py-xs bg-surface border border-outline-variant text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all uppercase">
+          <span
+            class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+          <input type="text" [ngModel]="searchQueryInput()" (ngModelChange)="onSearchChange($event)" placeholder="SKIN NAME..."
+            class="w-full pl-10 pr-sm py-xs bg-surface border border-outline-variant text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all uppercase">
         </div>
       </div>
 
       <div>
-        <label class="text-label-caps font-label-caps text-on-surface-variant block mb-xs uppercase">PRICE RANGE (USD)</label>
+        <label class="text-label-caps font-label-caps text-on-surface-variant block mb-xs uppercase">PRICE RANGE
+          (USD/EUR)</label>
         <div class="flex items-center gap-xs">
-          <input class="w-full border border-outline border-b-2 border-b-primary focus:ring-0 text-data-mono font-data-mono py-xs px-sm bg-surface-container-lowest" 
-                 type="number" [(ngModel)]="minPrice" />
+          <input
+            class="w-full border border-outline border-b-2 border-b-primary focus:ring-0 text-data-mono font-data-mono py-xs px-sm bg-surface-container-lowest"
+            type="number" [ngModel]="minPriceInput()" (ngModelChange)="onMinPriceChange($event)" />
           <span class="text-on-surface-variant">-</span>
-          <input class="w-full border border-outline border-b-2 border-b-primary focus:ring-0 text-data-mono font-data-mono py-xs px-sm bg-surface-container-lowest" 
-                 type="number" [(ngModel)]="maxPrice" />
+          <input
+            class="w-full border border-outline border-b-2 border-b-primary focus:ring-0 text-data-mono font-data-mono py-xs px-sm bg-surface-container-lowest"
+            type="number" [ngModel]="maxPriceInput()" (ngModelChange)="onMaxPriceChange($event)" />
         </div>
       </div>
 
       <div>
         <label class="text-label-caps font-label-caps text-on-surface-variant block mb-xs uppercase">WEAPON TYPE</label>
-        <select [(ngModel)]="selectedType" class="w-full border border-outline focus:border-b-2 focus:border-b-primary focus:ring-0 text-data-mono font-data-mono py-xs px-sm bg-surface-container-lowest appearance-none rounded-none uppercase">
+        <select [(ngModel)]="selectedType"
+          class="w-full border border-outline focus:border-b-2 focus:border-b-primary focus:ring-0 text-data-mono font-data-mono py-xs px-sm bg-surface-container-lowest appearance-none rounded-none uppercase">
           <option value="All">All Weapons</option>
-          <option value="AK-47">AK-47</option>
-          <option value="M4A4">M4A4</option>
-          <option value="AWP">AWP</option>
-          <option value="Knife">Knives</option>
-          <option value="Glove">Gloves</option>
+          <optgroup label="Pistols">
+            <option value="Glock-18">Glock-18</option>
+            <option value="USP-S">USP-S</option>
+            <option value="P2000">P2000</option>
+            <option value="Dual Berettas">Dual Berettas</option>
+            <option value="P250">P250</option>
+            <option value="Tec-9">Tec-9</option>
+            <option value="Five-SeveN">Five-SeveN</option>
+            <option value="CZ75-Auto">CZ75-Auto</option>
+            <option value="Desert Eagle">Desert Eagle</option>
+            <option value="R8 Revolver">R8 Revolver</option>
+          </optgroup>
+          <optgroup label="Rifles">
+            <option value="Galil AR">Galil AR</option>
+            <option value="FAMAS">FAMAS</option>
+            <option value="AK-47">AK-47</option>
+            <option value="M4A4">M4A4</option>
+            <option value="M4A1-S">M4A1-S</option>
+            <option value="SG 553">SG 553</option>
+            <option value="AUG">AUG</option>
+            <option value="SSG 08">SSG 08</option>
+            <option value="AWP">AWP</option>
+            <option value="G3SG1">G3SG1</option>
+            <option value="SCAR-20">SCAR-20</option>
+          </optgroup>
+          <optgroup label="SMGs">
+            <option value="MAC-10">MAC-10</option>
+            <option value="MP9">MP9</option>
+            <option value="MP7">MP7</option>
+            <option value="MP5-SD">MP5-SD</option>
+            <option value="UMP-45">UMP-45</option>
+            <option value="P90">P90</option>
+            <option value="PP-Bizon">PP-Bizon</option>
+          </optgroup>
+          <optgroup label="Heavy Weapons">
+            <option value="Nova">Nova</option>
+            <option value="XM1014">XM1014</option>
+            <option value="MAG-7">MAG-7</option>
+            <option value="Sawed-Off">Sawed-Off</option>
+            <option value="M249">M249</option>
+            <option value="Negev">Negev</option>
+          </optgroup>
+          <optgroup label="Knives">
+            <option value="Bayonet">Bayonet</option>
+            <option value="Bowie Knife">Bowie Knife</option>
+            <option value="Butterfly Knife">Butterfly Knife</option>
+            <option value="Classic Knife">Classic Knife</option>
+            <option value="Falchion Knife">Falchion Knife</option>
+            <option value="Flip Knife">Flip Knife</option>
+            <option value="Gut Knife">Gut Knife</option>
+            <option value="Huntsman Knife">Huntsman Knife</option>
+            <option value="Karambit">Karambit</option>
+            <option value="Kukri Knife">Kukri Knife</option>
+            <option value="M9 Bayonet">M9 Bayonet</option>
+            <option value="Navaja Knife">Navaja Knife</option>
+            <option value="Nomad Knife">Nomad Knife</option>
+            <option value="Paracord Knife">Paracord Knife</option>
+            <option value="Shadow Daggers">Shadow Daggers</option>
+            <option value="Skeleton Knife">Skeleton Knife</option>
+            <option value="Stiletto Knife">Stiletto Knife</option>
+            <option value="Survival Knife">Survival Knife</option>
+            <option value="Talon Knife">Talon Knife</option>
+            <option value="Ursus Knife">Ursus Knife</option>
+          </optgroup>
+          <optgroup label="Gloves">
+            <option value="Bloodhound Gloves">Bloodhound Gloves</option>
+            <option value="Broken Fang Gloves">Broken Fang Gloves</option>
+            <option value="Driver Gloves">Driver Gloves</option>
+            <option value="Hand Wraps">Hand Wraps</option>
+            <option value="Hydra Gloves">Hydra Gloves</option>
+            <option value="Moto Gloves">Moto Gloves</option>
+            <option value="Specialist Gloves">Specialist Gloves</option>
+            <option value="Sport Gloves">Sport Gloves</option>
+          </optgroup>
         </select>
       </div>
 
       <div>
         <label class="text-label-caps font-label-caps text-on-surface-variant block mb-xs uppercase">SORT BY</label>
         <div class="flex border border-outline p-gutter bg-outline-variant w-full">
-          <button (click)="toggleSort('net_profit_usd')" 
-                  [ngClass]="sortField() === 'net_profit_usd' ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface'"
-                  class="flex-1 text-label-caps font-label-caps px-base py-xs transition-colors flex items-center justify-center gap-xs">
-            PROFIT 
+          <button (click)="toggleSort('net_profit_usd')"
+            [ngClass]="sortField() === 'net_profit_usd' ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface'"
+            class="flex-1 text-label-caps font-label-caps px-base py-xs transition-colors flex items-center justify-center gap-xs">
+            PROFIT
             <span class="material-symbols-outlined text-[14px]">
-              {{ sortField() === 'net_profit_usd' ? (sortDirection() === 'asc' ? 'arrow_upward' : 'arrow_downward') : 'unfold_more' }}
+              {{ sortField() === 'net_profit_usd' ? (sortDirection() === 'asc' ? 'arrow_upward' : 'arrow_downward') :
+              'unfold_more' }}
             </span>
           </button>
-          <button (click)="toggleSort('dmarket_price')" 
-                  [ngClass]="sortField() === 'dmarket_price' ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface'"
-                  class="flex-1 text-label-caps font-label-caps px-base py-xs transition-colors flex items-center justify-center gap-xs">
+          <button (click)="toggleSort('dmarket_price')"
+            [ngClass]="sortField() === 'dmarket_price' ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface'"
+            class="flex-1 text-label-caps font-label-caps px-base py-xs transition-colors flex items-center justify-center gap-xs">
             PRICE
             <span class="material-symbols-outlined text-[14px]">
-              {{ sortField() === 'dmarket_price' ? (sortDirection() === 'asc' ? 'arrow_upward' : 'arrow_downward') : 'unfold_more' }}
+              {{ sortField() === 'dmarket_price' ? (sortDirection() === 'asc' ? 'arrow_upward' : 'arrow_downward') :
+              'unfold_more' }}
             </span>
           </button>
         </div>
       </div>
 
       <div>
-        <label class="text-label-caps font-label-caps text-on-surface-variant block mb-xs uppercase">RECOMMENDATION</label>
+        <label
+          class="text-label-caps font-label-caps text-on-surface-variant block mb-xs uppercase">RECOMMENDATION</label>
         <div class="space-y-xs">
-          <button (click)="setRecommendation('All')" 
-                  [ngClass]="recommendationFilter() === 'All' ? 'bg-surface-container-low border-outline' : 'border-transparent'"
-                  class="w-full flex items-center gap-xs p-xs hover:bg-surface-container-low transition-colors cursor-pointer border text-left">
+          <button (click)="setRecommendation('All')"
+            [ngClass]="recommendationFilter() === 'All' ? 'bg-surface-container-low border-outline' : 'border-transparent'"
+            class="w-full flex items-center gap-xs p-xs hover:bg-surface-container-low transition-colors cursor-pointer border text-left">
             <div class="w-2 h-2 bg-on-surface-variant rounded-full"></div>
             <span class="text-data-mono font-data-mono text-xs uppercase">All Listings</span>
           </button>
-          <button (click)="setRecommendation('OPORTUNITAT RENTABLE')" 
-                  [ngClass]="recommendationFilter() === 'OPORTUNITAT RENTABLE' ? 'bg-surface-container-low border-outline' : 'border-transparent'"
-                  class="w-full flex items-center gap-xs p-xs hover:bg-surface-container-low transition-colors cursor-pointer border text-left">
+          <button (click)="setRecommendation('Profitable Opportunity')"
+            [ngClass]="recommendationFilter() === 'Profitable Opportunity' ? 'bg-surface-container-low border-outline' : 'border-transparent'"
+            class="w-full flex items-center gap-xs p-xs hover:bg-surface-container-low transition-colors cursor-pointer border text-left">
             <div class="w-2 h-2 bg-primary rounded-full"></div>
-            <span class="text-data-mono font-data-mono text-xs uppercase">Oportunitat Rentable</span>
+            <span class="text-data-mono font-data-mono text-xs uppercase">Profitable Opportunity</span>
           </button>
-          <button (click)="setRecommendation('MARGE BAIX')" 
-                  [ngClass]="recommendationFilter() === 'MARGE BAIX' ? 'bg-surface-container-low border-outline' : 'border-transparent'"
-                  class="w-full flex items-center gap-xs p-xs hover:bg-surface-container-low transition-colors cursor-pointer border text-left">
+          <button (click)="setRecommendation('Low Margin')"
+            [ngClass]="recommendationFilter() === 'Low Margin' ? 'bg-surface-container-low border-outline' : 'border-transparent'"
+            class="w-full flex items-center gap-xs p-xs hover:bg-surface-container-low transition-colors cursor-pointer border text-left">
             <div class="w-2 h-2 bg-warning rounded-full" style="background-color: #ffd5ae;"></div>
-            <span class="text-data-mono font-data-mono text-xs uppercase">Marge Baix</span>
+            <span class="text-data-mono font-data-mono text-xs uppercase">Low Margin</span>
           </button>
-          <button (click)="setRecommendation('NO RECOMANABLE')" 
-                  [ngClass]="recommendationFilter() === 'NO RECOMANABLE' ? 'bg-surface-container-low border-outline' : 'border-transparent'"
-                  class="w-full flex items-center gap-xs p-xs hover:bg-surface-container-low transition-colors cursor-pointer border text-left">
+          <button (click)="setRecommendation('Not Recommended')"
+            [ngClass]="recommendationFilter() === 'Not Recommended' ? 'bg-surface-container-low border-outline' : 'border-transparent'"
+            class="w-full flex items-center gap-xs p-xs hover:bg-surface-container-low transition-colors cursor-pointer border text-left">
             <div class="w-2 h-2 bg-error rounded-full"></div>
-            <span class="text-data-mono font-data-mono text-xs uppercase">No Recomanable</span>
+            <span class="text-data-mono font-data-mono text-xs uppercase">Not Recommended</span>
           </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Data Canvas -->
-  <div class="col-span-12 md:col-span-9 bg-surface-container-lowest p-md border-l border-outline-variant relative">
+  <!-- Taula de dades (Data Canvas) -->
+  <div
+    class="col-span-12 md:col-span-9 bg-surface-container-lowest p-2 md:p-md md:border-l border-outline-variant relative">
     @if (loading()) {
-      <div class="flex flex-col items-center justify-center py-xl gap-md">
-        <app-loading-spinner />
-      </div>
+    <div class="flex flex-col items-center justify-center py-xl gap-md">
+      <app-loading-spinner />
+    </div>
     } @else {
-      <div class="overflow-x-visible">
-        <table class="w-full text-left border-collapse table-fixed">
-          <thead>
-            <tr class="bg-surface-container text-label-caps font-label-caps text-on-surface-variant border-b border-outline-variant">
-              <th class="p-xs font-normal border-r border-outline-variant w-40 text-center uppercase">IMG</th>
-              <th class="p-xs font-normal border-r border-outline-variant uppercase">ITEM DETAILS</th>
-              <th class="p-xs font-normal border-r border-outline-variant w-28 text-center uppercase">DMARKET</th>
-              <th class="p-xs font-normal border-r border-outline-variant w-28 text-center uppercase">STEAM</th>
-              <th class="p-xs font-normal border-r border-outline-variant w-28 text-center uppercase">FEE (10%)</th>
-              <th class="p-xs font-normal border-r border-outline-variant w-28 text-center uppercase">NET PROFIT</th>
-              <th class="p-xs font-normal w-24 text-center uppercase">BUY</th>
-            </tr>
-          </thead>
-          <tbody class="text-data-mono font-data-mono">
-            <tr *ngFor="let skin of paginatedSkins()" 
-                class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
-              <td class="p-xs border-r border-outline-variant text-center py-sm relative">
-                <img [src]="skin.image" [alt]="skin.name" 
-                     (click)="openImagePreview(skin.image)"
-                     class="object-contain inline-block border border-outline-variant w-32 h-32 bg-surface hover:scale-[1.5] hover:shadow-2xl transition-all duration-300 cursor-zoom-in relative z-10 hover:z-50 origin-center" />
-              </td>
-              <td class="p-xs border-r border-outline-variant py-sm">
-                <a [routerLink]="['/skin', skin.id]" class="text-on-surface font-bold hover:text-primary transition-colors cursor-pointer" [title]="skin.name">{{ skin.name }}</a>
-                <div class="text-[10px] text-on-surface-variant mt-1 uppercase">{{ skin.recommendation || 'Verified Asset' }}</div>
-              </td>
-              <td class="p-xs border-r border-outline-variant py-sm text-center font-bold text-on-surface">
-                ${{ skin.dmarket_price }}
-              </td>
-              <td class="p-xs border-r border-outline-variant py-sm text-center text-on-surface-variant">
-                ${{ skin.steam_price }}
-              </td>
-              <td class="p-xs border-r border-outline-variant py-sm text-center text-error">
-                -${{ getFee(skin.steam_price) }}
-              </td>
-              <td class="p-xs border-r border-outline-variant py-sm text-center font-bold"
-                  [ngClass]="skin.net_profit_usd > 0 ? 'text-primary' : 'text-error'"> {{ skin.net_profit_usd > 0 ? '+' : '' }}${{ skin.net_profit_usd }}
-              </td>
-              <td class="p-xs text-center py-sm">
-                <button (click)="onBuy(skin)" class="material-symbols-outlined bg-primary text-on-primary p-1 hover:bg-on-primary-fixed-variant transition-all text-[18px] rounded-DEFAULT active:scale-95">shopping_cart</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="overflow-x-auto w-full">
+      <table class="w-full text-left border-collapse min-w-[800px]">
+        <thead>
+          <tr
+            class="bg-surface-container text-label-caps font-label-caps text-on-surface-variant border-b border-outline-variant">
+            <th class="p-xs font-normal border-r border-outline-variant w-24 md:w-40 text-center uppercase">IMG</th>
+            <th class="p-xs font-normal border-r border-outline-variant uppercase">ITEM DETAILS</th>
+            <th class="p-xs font-normal border-r border-outline-variant w-24 md:w-28 text-center uppercase">DMARKET</th>
+            <th class="p-xs font-normal border-r border-outline-variant w-28 text-center uppercase">STEAM</th>
+            <th class="p-xs font-normal border-r border-outline-variant w-28 text-center uppercase">STEAM FEE (15%)</th>
+            <th class="p-xs font-normal border-r border-outline-variant w-28 text-center uppercase">NET PROFIT</th>
+            <th class="p-xs font-normal w-24 text-center uppercase">BUY</th>
+          </tr>
+        </thead>
+        <tbody class="text-data-mono font-data-mono">
+          <tr *ngFor="let skin of paginatedSkins(); let i = index; trackBy: trackBySkin"
+            class="border-b border-outline-variant hover:bg-surface-container-low transition-all duration-300 group animate-slide-up"
+            [style.animation-delay]="(0.05 * i) + 's'"
+            style="animation-fill-mode: both; position: relative; z-index: 1;">
+            <td class="p-xs border-r border-outline-variant text-center py-sm relative">
+              <img [src]="skin.image" [alt]="skin.name" (click)="openImagePreview(skin.image)"
+                class="object-contain inline-block w-24 h-24 hover:scale-150 drop-shadow-sm hover:drop-shadow-2xl transition-transform duration-300 cursor-zoom-in relative z-10 hover:z-50 origin-center mix-blend-multiply" />
+            </td>
+            <td class="p-xs border-r border-outline-variant py-sm">
+              <a [routerLink]="['/skin', skin.id]"
+                class="text-on-surface font-bold hover:text-primary transition-colors cursor-pointer block mb-xs"
+                [title]="skin.name">{{ skin.name }}</a>
+              <div class="text-[9px] font-bold mt-1 uppercase inline-block px-xs py-[2px] border" [ngClass]="{
+                       'bg-[#e8f5e9] border-[#22c55e]/30 text-[#1b5e20]': skin.recommendation === 'Profitable Opportunity',
+                       'bg-[#fffde7] border-[#fbc02d]/30 text-[#f57f17]': skin.recommendation === 'Low Margin',
+                       'bg-[#ffebee] border-[#ef4444]/30 text-[#c62828]': skin.recommendation === 'Not Recommended'
+                     }">
+                {{ skin.recommendation || 'Verified Asset' }}
+              </div>
+            </td>
+            <td class="p-xs border-r border-outline-variant py-sm text-center font-bold text-on-surface">
+              {{ currencyService.format(skin.dmarket_price) }}
+            </td>
+            <td class="p-xs border-r border-outline-variant py-sm text-center text-on-surface-variant">
+              {{ currencyService.format(skin.steam_price) }}
+            </td>
+            <td class="p-xs border-r border-outline-variant py-sm text-center text-error">
+              -{{ currencyService.format(getFee(skin.steam_price)) }}
+            </td>
+            <td class="p-xs border-r border-outline-variant py-sm text-center font-bold"
+              [ngClass]="skin.net_profit_usd > 0 ? 'text-primary' : 'text-error'"> {{ skin.net_profit_usd > 0 ? '+' : ''
+              }}{{ currencyService.format(skin.net_profit_usd) }}
+            </td>
+            <td class="p-xs text-center py-sm">
+              <button (click)="onBuy(skin)"
+                class="material-symbols-outlined bg-primary text-on-primary p-1 hover:bg-on-surface hover:text-surface-container-lowest transition-all text-[18px] rounded-DEFAULT active:scale-95 group-hover:shadow-md">shopping_cart</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-      <!-- Pagination Controls -->
-      <div class="flex justify-between items-center mt-md bg-surface-container p-sm border border-outline-variant" *ngIf="totalPages() > 1">
-        <div class="text-label-caps font-label-caps text-on-surface-variant">
-          Showing page {{ currentPage() }} of {{ totalPages() }}
-        </div>
-        <div class="flex gap-xs">
-          <button (click)="prevPage()" 
-                  [disabled]="currentPage() === 1"
-                  [ngClass]="currentPage() === 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-outline-variant'"
-                  class="material-symbols-outlined bg-surface border border-outline-variant p-1 transition-all text-[20px]">chevron_left</button>
-          
-          <div class="flex gap-xs">
-            <button *ngFor="let p of [].constructor(totalPages()); let i = index" 
-                    (click)="goToPage(i + 1)"
-                    [ngClass]="currentPage() === i + 1 ? 'bg-primary text-on-primary border-primary' : 'bg-surface text-on-surface border-outline-variant hover:bg-outline-variant'"
-                    class="w-8 h-8 text-data-mono font-data-mono text-xs border flex items-center justify-center transition-all">
-              {{ i + 1 }}
+    <!-- Controls de paginació -->
+    <div class="flex justify-between items-center mt-md bg-surface-container p-sm border border-outline-variant"
+      *ngIf="totalPages() > 1">
+      <div class="text-label-caps font-label-caps text-on-surface-variant text-[10px] sm:text-xs">
+        Showing page {{ currentPage() }} of {{ totalPages() }}
+      </div>
+      <div class="flex gap-xs">
+        <button (click)="prevPage()" [disabled]="currentPage() === 1"
+          [ngClass]="currentPage() === 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-outline-variant'"
+          class="material-symbols-outlined bg-surface border border-outline-variant p-1 transition-all text-[20px]">chevron_left</button>
+
+        <div class="hidden sm:flex gap-xs">
+          <ng-container *ngFor="let p of visiblePages()">
+            <button *ngIf="p !== '...'" (click)="goToPage(p)"
+              [ngClass]="currentPage() === p ? 'bg-primary text-on-primary border-primary' : 'bg-surface text-on-surface border-outline-variant hover:bg-outline-variant'"
+              class="w-8 h-8 text-data-mono font-data-mono text-xs border flex items-center justify-center transition-all">
+              {{ p }}
             </button>
-          </div>
+            <span *ngIf="p === '...'"
+              class="w-8 h-8 flex items-center justify-center text-on-surface-variant font-bold">
+              ...
+            </span>
+          </ng-container>
+        </div>
 
-          <button (click)="nextPage()" 
-                  [disabled]="currentPage() === totalPages()"
-                  [ngClass]="currentPage() === totalPages() ? 'opacity-30 cursor-not-allowed' : 'hover:bg-outline-variant'"
-                  class="material-symbols-outlined bg-surface border border-outline-variant p-1 transition-all text-[20px]">chevron_right</button>
-        </div>
+        <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
+          [ngClass]="currentPage() === totalPages() ? 'opacity-30 cursor-not-allowed' : 'hover:bg-outline-variant'"
+          class="material-symbols-outlined bg-surface border border-outline-variant p-1 transition-all text-[20px]">chevron_right</button>
       </div>
-      
-      @if (filteredSkins().length === 0) {
-        <div class="flex flex-col items-center justify-center py-xl gap-sm">
-          <span class="material-symbols-outlined text-[48px] text-on-surface-variant opacity-20">search_off</span>
-          <span class="text-label-caps font-label-caps text-on-surface-variant">NO MATCHING ARBITRAGE OPPORTUNITIES FOUND</span>
-        </div>
-      }
+    </div>
+
+    @if (filteredSkins().length === 0) {
+    <div class="flex flex-col items-center justify-center py-xl gap-sm">
+      <span class="material-symbols-outlined text-[48px] text-on-surface-variant opacity-20">search_off</span>
+      <span class="text-label-caps font-label-caps text-on-surface-variant">NO MATCHING ARBITRAGE OPPORTUNITIES
+        FOUND</span>
+    </div>
+    }
     }
   </div>
 
-  <!-- Image Preview Modal -->
-  <div *ngIf="selectedImage()" 
-       (click)="closeImagePreview()"
-       class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-xl animate-in fade-in duration-300 cursor-zoom-out">
-    <div class="relative bg-surface-container-lowest p-md border border-outline-variant max-w-5xl w-full shadow-2xl animate-in zoom-in-95 duration-300" (click)="$event.stopPropagation()">
-      <button (click)="closeImagePreview()" 
-              class="absolute -top-12 right-0 text-white flex items-center gap-xs hover:text-primary transition-colors uppercase font-label-caps tracking-widest text-xs">
+  <!-- Modal de vista prèvia de la imatge -->
+  <div *ngIf="selectedImage()" (click)="closeImagePreview()"
+    class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-xl animate-in fade-in duration-300 cursor-zoom-out">
+    <div
+      class="relative bg-surface-container-lowest p-md border border-outline-variant max-w-5xl w-full shadow-2xl animate-in zoom-in-95 duration-300"
+      (click)="$event.stopPropagation()">
+      <button (click)="closeImagePreview()"
+        class="absolute -top-12 right-0 text-white flex items-center gap-xs hover:text-primary transition-colors uppercase font-label-caps tracking-widest text-xs">
         Close Preview <span class="material-symbols-outlined">close</span>
       </button>
-      <img [src]="selectedImage()" alt="Skin Preview" class="w-full h-auto object-contain max-h-[80vh] bg-surface-container-low" />
+      <img [src]="selectedImage()" alt="Skin Preview"
+        class="w-full h-auto object-contain max-h-[80vh] bg-surface-container-low" />
     </div>
   </div>
-  <!-- Transaction Modal -->
+  <!-- Modal de transacció -->
   <div *ngIf="transactionModal()" class="fixed inset-0 z-[100] flex items-center justify-center p-md">
     <div class="absolute inset-0 bg-on-surface/60 backdrop-blur-sm" (click)="closeTransaction()"></div>
-    <div class="relative bg-white border border-outline-variant w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+    <div
+      class="relative bg-white border border-outline-variant w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
       <div class="p-md border-b border-outline-variant bg-surface-bright flex justify-between items-center">
         <span class="text-label-caps font-label-caps text-primary">Execute Buy Order</span>
-        <button (click)="closeTransaction()" class="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors">close</button>
+        <button (click)="closeTransaction()"
+          class="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors">close</button>
       </div>
-      
+
       <div class="p-lg flex flex-col gap-md">
         <div class="flex gap-md items-center">
-          <div class="w-24 h-24 bg-surface-container-low border border-outline-variant p-2 flex items-center justify-center">
+          <div
+            class="w-24 h-24 bg-surface-container-low border border-outline-variant p-2 flex items-center justify-center">
             <img [src]="transactionModal().image" [alt]="transactionModal().name" class="w-full h-auto object-contain">
           </div>
           <div>
             <h3 class="text-headline-sm font-bold uppercase">{{ transactionModal().name }}</h3>
-            <p class="text-data-mono text-on-surface-variant text-xs mt-1">STEAM REF: ${{ transactionModal().steam_price }}</p>
+            <p class="text-data-mono text-on-surface-variant text-xs mt-1">STEAM REF: {{
+              currencyService.format(transactionModal().steam_price) }}</p>
           </div>
         </div>
 
         <div class="bg-surface-container-lowest p-md border border-outline-variant">
-          <label class="text-[10px] font-label-caps text-on-surface-variant block mb-2">CUSTOM PURCHASE PRICE (USD)</label>
+          <label class="text-[10px] font-label-caps text-on-surface-variant block mb-2">CUSTOM PURCHASE PRICE ({{
+            currencyService.selectedCurrency() }})</label>
           <div class="flex items-center gap-sm">
-            <span class="text-headline-md font-bold text-primary">$</span>
-            <input type="number" [(ngModel)]="customPrice" class="w-full bg-transparent border-none text-headline-md font-bold focus:ring-0 p-0 text-primary" step="0.01">
+            <span class="text-headline-md font-bold text-primary">{{ currencyService.currencySymbol() }}</span>
+            <input type="number" [(ngModel)]="customPrice"
+              class="w-full bg-transparent border-none text-headline-md font-bold focus:ring-0 p-0 text-primary"
+              step="0.01">
           </div>
         </div>
 
@@ -248,19 +360,22 @@
             <span>PLATFORM FEE (0%)</span>
             <span>$0.00</span>
           </div>
-          <div class="flex justify-between text-[11px] font-bold uppercase text-on-surface pt-xs border-t border-outline-variant">
+          <div
+            class="flex justify-between text-[11px] font-bold uppercase text-on-surface pt-xs border-t border-outline-variant">
             <span>TOTAL DEBIT</span>
             <span class="text-data-mono">${{ customPrice() | number:'1.2-2' }}</span>
           </div>
         </div>
 
-        <button (click)="confirmBuy()" class="w-full bg-primary text-on-primary py-md font-label-caps text-center hover:bg-on-primary-fixed-variant transition-all active:scale-[0.99] flex items-center justify-center gap-sm">
+        <button (click)="confirmBuy()"
+          class="w-full bg-primary text-on-primary py-md font-label-caps text-center hover:bg-on-primary-fixed-variant transition-all active:scale-[0.99] flex items-center justify-center gap-sm">
           <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
           CONFIRM TRANSACTION
         </button>
       </div>
-      
-      <div class="px-md py-xs bg-surface border-t border-outline-variant text-[9px] text-on-surface-variant font-data-mono flex justify-between opacity-50 uppercase">
+
+      <div
+        class="px-md py-xs bg-surface border-t border-outline-variant text-[9px] text-on-surface-variant font-data-mono flex justify-between opacity-50 uppercase">
         <span>STATUS: PENDING_APPROVAL</span>
         <span>AUTH_NODE: 0xFF21</span>
       </div>

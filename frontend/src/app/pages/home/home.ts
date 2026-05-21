@@ -26,7 +26,7 @@ export class Home implements OnInit {
   loadData() {
     this.loading.set(true);
     
-    // Fetch rankings
+    // Obtenir classificacions
     this.csapiService.getRankings().subscribe({
       next: (res) => {
         const data = Array.isArray(res) ? res : (res.rankings || []);
@@ -35,7 +35,7 @@ export class Home implements OnInit {
       error: (err) => console.error('Error loading rankings', err)
     });
 
-    // Fetch players
+    // Obtenir jugadors
     this.csapiService.getPlayerStats().subscribe({
       next: (res) => {
         const data = Array.isArray(res) ? res : (res.players || []);
@@ -44,11 +44,11 @@ export class Home implements OnInit {
       error: (err) => console.error('Error loading players', err)
     });
 
-    // Fetch matches
+    // Obtenir partits
     this.csapiService.getLatestMatches().subscribe({
       next: (res) => {
         const data = Array.isArray(res) ? res : (res.matches || []);
-        this.matches.set(data.slice(0, 3)); // 3 partidos
+        this.matches.set(data.slice(0, 3)); // 3 partits
         this.loading.set(false);
       },
       error: (err) => {

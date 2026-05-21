@@ -73,24 +73,27 @@ class OperationController extends Controller
                             ->where('status', 'owned')
                             ->firstOrFail();
 
-        // Càlcul del marge de benefici (Preu Venda actual - Preu de Compra original) (lo que el user ha tret de benefici per l'item)
-        $profit = $request->sell_price - $userItem->purchase_price;
+        // Càlcul del preu de venda net (restant la comissió de Steam del 15%)
+        $netSellPrice = round($request->sell_price * 0.85, 2);
+        
+        // Càlcul del marge de benefici net (Preu Venda Net - Preu de Compra original)
+        $profit = round($netSellPrice - $userItem->purchase_price, 2);
 
         // Actualització de l'estat de l'actiu a "venut"
         $userItem->update(['status' => 'sold']);
 
-        // Registre de l'operació financera a l'historial
+        // Registre de l'operació financera a l'historial (guardem el preu net al saldo/benefici)
         Operation::create([
             'user_id'      => $user->id,
             'user_item_id' => $userItem->id,
             'type'         => 'sell',
-            'amount'       => $request->sell_price,
+            'amount'       => $request->sell_price, // preu brut de llistat
             'profit'       => $profit,
             'date'         => Carbon::now()
         ]);
 
-        // Actualització del saldo amb redondeig (moneda de 2 decimals)
-        $user->balance = round($user->balance + $request->sell_price, 2);
+        // Actualització del saldo afegint només el preu net de venda (menys comissions)
+        $user->balance = round($user->balance + $netSellPrice, 2);
         $user->save();
 
         return response()->json([

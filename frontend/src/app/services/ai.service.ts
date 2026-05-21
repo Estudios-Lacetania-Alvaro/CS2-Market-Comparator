@@ -9,7 +9,7 @@ import { AuthService } from './auth'; // Ajustar la ruta si cal
 export class AiService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
-  private apiUrl = 'http://localhost:8000/api/ai';
+  private apiUrl = '/api/ai';
 
   /**
    * Obté les recomanacions de l'IA adjuntant estrictament el token de Sanctum.

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
+import { CurrencyService, CurrencyCode } from '../../services/currency.service';
 
 @Component({
   selector: 'app-profile',
@@ -17,7 +18,7 @@ export class Profile implements OnInit {
   private router = inject(Router);
   private notify = inject(NotificationService);
 
-  // Usamos un objeto local para el formulario para evitar que el effect lo sobrescriba
+  // Utilitzem un objecte local per al formulari per evitar que l'effect el sobrescrigui
   user = signal<any>({
     name: '',
     email: '',
@@ -25,9 +26,10 @@ export class Profile implements OnInit {
     profile_photo: ''
   });
   profileImage = signal<string>("");
+  currencyService = inject(CurrencyService);
 
   ngOnInit() {
-    // Cargamos los datos iniciales del servicio
+    // Carreguem les dades inicials del servei
     const current = this.authService.getUser()();
     if (current) {
       this.user.set({ ...current });
@@ -60,6 +62,11 @@ export class Profile implements OnInit {
     this.authService.logout().subscribe(() => {
       this.router.navigate(['/login']);
     });
+  }
+
+  changeCurrency(code: CurrencyCode) {
+    this.currencyService.setCurrency(code);
+    this.notify.show(`Currency changed to ${code}`, 'success');
   }
 
   onFileSelected(event: any) {

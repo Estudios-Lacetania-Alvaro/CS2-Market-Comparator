@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
       <h1 class="text-[120px] font-bold text-[#ef4444] leading-none">404</h1>
       <p class="text-xl text-on-surface uppercase tracking-widest border-b border-[#ef4444] pb-2">Target not found</p>
       
-      <!-- User's requested CSGO GIF -->
+      <!-- GIF de CSGO sol·licitat per l'usuari -->
       <img src="/csgo.gif" alt="404 Not Found" class="w-240 h-240 object-cover my-6 shadow-2xl border-4 border-outline-variant rounded" />
       
       <p class="text-sm text-on-surface-variant mb-6 max-w-md uppercase">

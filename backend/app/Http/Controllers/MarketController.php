@@ -16,19 +16,24 @@ class MarketController extends Controller
     {
         // Recuperació i transformació de la col·lecció de skins
         $skins = Skin::all()->map(function ($skin) {
-            
-            // Determinació del tipus de recomanació basada en el marge de benefici
-            $recommendation = 'No recomanable';
-            if ($skin->profit_margin > 15) {
-                $recommendation = 'Oportunitat rentable';
-            } elseif ($skin->profit_margin > 0) {
-                $recommendation = 'Marge baix';
-            }
-
-            // Càlcul de la diferència bruta entre preus de venda i compra
+            // Càlcul de la diferència neta restant la comissió de Steam (15%)
             $netProfit = 0;
             if ($skin->steam_price && $skin->dmarket_price) {
-                $netProfit = $skin->steam_price - $skin->dmarket_price;
+                $netProfit = ($skin->steam_price * 0.85) - $skin->dmarket_price;
+            }
+
+            // Marge de benefici net percentual (%) basat en el preu de compra (DMarket)
+            $netProfitMarginPercent = 0;
+            if ($skin->dmarket_price > 0) {
+                $netProfitMarginPercent = ($netProfit / $skin->dmarket_price) * 100;
+            }
+
+            // Determinació del tipus de recomanació basada en el marge de benefici NET real
+            $recommendation = 'Not Recommended';
+            if ($netProfitMarginPercent > 10) {
+                $recommendation = 'Profitable Opportunity';
+            } elseif ($netProfitMarginPercent > 0) {
+                $recommendation = 'Low Margin';
             }
 
             // Retorn de l'estructura de dades normalitzada per al frontend
@@ -38,7 +43,7 @@ class MarketController extends Controller
                 'image' => $skin->image_url,
                 'steam_price' => $skin->steam_price,
                 'dmarket_price' => $skin->dmarket_price,
-                'profit_margin_percent' => $skin->profit_margin,
+                'profit_margin_percent' => round($netProfitMarginPercent, 2),
                 'net_profit_usd' => round($netProfit, 2),
                 'recommendation' => $recommendation
             ];
@@ -76,9 +81,9 @@ class MarketController extends Controller
                 ];
             });
 
-        // Estimació de comissions per plataforma (15% Steam / 3% DMarket)
+        // Estimació de comissions per plataforma (15% Steam / 2% DMarket)
         $steamFee = $skin->steam_price ? ($skin->steam_price * 0.15) : 0;
-        $dmarketFee = $skin->dmarket_price ? ($skin->dmarket_price * 0.03) : 0;
+        $dmarketFee = $skin->dmarket_price ? ($skin->dmarket_price * 0.02) : 0;
 
         // Resposta
         return response()->json([

@@ -6,9 +6,9 @@ import { Observable, tap, catchError, of } from 'rxjs';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8000/api'
+  private apiUrl = '/api'
   
-  // Usamos un Signal para el estado del usuario (Moderno / Zoneless)
+  // Utilitzem un Signal per a l'estat de l'usuari (Modern / Zoneless)
   private currentUserSignal = signal<any>(null);
   public currentUser = computed(() => this.currentUserSignal());
 

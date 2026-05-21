@@ -1,38 +1,50 @@
-<main class="pt-8 pb-md px-md md:px-lg w-full flex flex-col gap-md">
-  <!-- Dashboard Header -->
+<main class="pt-8 pb-md px-md md:px-lg w-full flex flex-col gap-md animate-fade-in">
+  <!-- Capçalera del Dashboard -->
   <div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
     <div>
       <span class="text-label-caps font-label-caps text-primary mb-base block">ASSET MANAGEMENT</span>
-      <h1 class="text-display-lg font-display-lg text-on-surface uppercase tracking-tight">Inventory & Movements</h1>
+      <h1 class="text-headline-lg md:text-display-lg font-display-lg text-on-surface uppercase tracking-tight">Inventory & Movements</h1>
     </div>
     </div>
 
-  <!-- Top Section: Performance Metrics -->
-  <section class="grid grid-cols-1 md:grid-cols-3 gap-md">
+  <!-- Secció superior: Mètriques de rendiment -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-md animate-slide-up" style="animation-delay: 0.1s; animation-fill-mode: both;">
     <div class="bg-white border border-outline-variant p-md flex flex-col justify-center min-h-[100px]">
       <span class="text-label-caps font-label-caps text-on-surface-variant">TOTAL INVESTED</span>
-      <p class="text-headline-md font-bold mt-xs">${{ totalInvested() | number:'1.2-2' }}</p>
+      <p class="text-headline-md font-bold mt-xs">{{ currencyService.format(totalInvested()) }}</p>
     </div>
     <div class="bg-white border border-outline-variant p-md flex flex-col justify-center min-h-[100px]">
-      <span class="text-label-caps font-label-caps text-on-surface-variant">EST. CURRENT VALUE</span>
-      <p class="text-headline-md font-bold mt-xs text-primary">${{ currentValue() | number:'1.2-2' }}</p>
+      <span class="text-label-caps font-label-caps text-on-surface-variant">ESTIMATED CURRENT VALUE STEAM MARKET</span>
+      <p class="text-headline-md font-bold mt-xs text-primary">{{ currencyService.format(currentValue()) }}</p>
     </div>
     <div class="bg-white border border-outline-variant p-md flex flex-col justify-center min-h-[100px]">
       <span class="text-label-caps font-label-caps text-on-surface-variant">ACCUMULATED ROI</span>
-      <p class="text-headline-md font-bold mt-xs text-primary">+{{ roi() | number:'1.1-1' }}%</p>
+      <p class="text-headline-md font-bold mt-xs" [ngClass]="roi() >= 0 ? 'text-primary' : 'text-error'">
+        {{ roi() >= 0 ? '+' : '' }}{{ roi() | number:'1.1-1' }}%
+      </p>
     </div>
   </section>
 
-  <!-- Middle Section: Inventory Grid -->
-  <div class="grid grid-cols-1 gap-lg">
+  <!-- Secció mitjana: Quadrícula de l'inventari -->
+  <div class="grid grid-cols-1 gap-lg animate-slide-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
     <section>
       <div class="border border-outline-variant bg-white overflow-hidden">
-        <div class="p-md border-b border-outline-variant flex justify-between items-center bg-surface-bright">
+        <div class="p-md border-b border-outline-variant flex flex-col sm:flex-row justify-between items-stretch sm:items-center bg-surface-bright gap-md">
           <span class="text-label-caps font-label-caps flex items-center gap-xs">
             <span class="material-symbols-outlined text-[16px]">inventory_2</span>
             Current Inventory
           </span>
-          <span class="text-data-mono text-on-surface-variant uppercase text-[10px] font-bold">{{ inventory().length }} ITEMS TOTAL</span>
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-sm sm:gap-md w-full sm:w-auto">
+            <div class="relative w-full sm:w-48">
+              <span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px]">search</span>
+              <input type="text" 
+                     [ngModel]="inventorySearch()" 
+                     (ngModelChange)="inventorySearch.set($event)"
+                     placeholder="Search inventory..." 
+                     class="bg-surface-container-low border border-outline-variant pl-8 pr-md py-1 text-[10px] font-data-mono focus:ring-1 focus:ring-primary focus:border-primary outline-none uppercase w-full">
+            </div>
+            <span class="text-data-mono text-on-surface-variant uppercase text-[10px] font-bold text-center sm:text-left">{{ filteredInventory().length }} ITEMS TOTAL</span>
+          </div>
         </div>
         
         <div class="grid-hairline grid-cols-1 md:grid-cols-2">
@@ -45,9 +57,12 @@
               No items detected in your inventory.
             </div>
           } @else {
-            <div *ngFor="let item of paginatedInventory()" class="cell-bg p-md hover:bg-surface-container-low transition-colors group cursor-pointer border-r border-outline-variant inventory-card">
-              <div class="flex gap-md h-full">
-                <div class="w-24 h-24 bg-surface-container-lowest border border-outline-variant p-2 flex items-center justify-center shrink-0">
+            <div *ngFor="let item of paginatedInventory(); let i = index" 
+                 [routerLink]="['/skin', item.skin?.id]"
+                 class="cell-bg p-md hover:bg-surface-container-low transition-all duration-300 group cursor-pointer border-r border-b border-outline-variant inventory-card hover:shadow-md hover:-translate-y-1 animate-slide-up"
+                 [style.animation-delay]="(0.05 * i) + 's'" style="animation-fill-mode: both;">
+              <div class="flex gap-sm sm:gap-md h-full">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-surface-container-lowest border border-outline-variant p-2 flex items-center justify-center shrink-0">
                   <img class="w-full h-auto object-contain max-h-full" 
                        [src]="item.skin?.image_url || 'https://via.placeholder.com/150?text=Skin'" 
                        [alt]="item.skin?.name" />
@@ -55,16 +70,16 @@
                 <div class="flex-1 flex flex-col justify-between">
                   <div>
                     <div class="flex justify-between items-start gap-xs">
-                      <span class="text-label-caps font-bold text-primary line-clamp-2 leading-tight pr-2">{{ item.skin?.name }}</span>
+                      <span class="text-label-caps font-bold text-primary line-clamp-2 leading-tight pr-2 text-xs sm:text-sm">{{ item.skin?.name }}</span>
                     </div>
-                    <div class="mt-sm grid grid-cols-2 gap-md">
+                    <div class="mt-sm grid grid-cols-2 gap-sm sm:gap-md">
                       <div>
                         <p class="text-[9px] text-on-surface-variant font-bold uppercase tracking-tighter">Cost Basis</p>
-                        <p class="text-data-mono text-sm">${{ item.purchase_price }}</p>
+                        <p class="text-data-mono text-xs sm:text-sm">{{ currencyService.format(item.purchase_price) }}</p>
                       </div>
                       <div>
                         <p class="text-[9px] text-on-surface-variant font-bold uppercase tracking-tighter">Acquired</p>
-                        <p class="text-data-mono text-sm">{{ formatDate(item.created_at) }}</p>
+                        <p class="text-data-mono text-xs sm:text-sm">{{ formatDate(item.created_at) }}</p>
                       </div>
                     </div>
                   </div>
@@ -80,7 +95,7 @@
           }
         </div>
 
-        <!-- Inventory Pagination Controls -->
+        <!-- Controls de paginació de l'inventari -->
         <div class="p-md border-t border-outline-variant flex justify-between items-center bg-surface-container-lowest">
           <div class="text-[10px] text-on-surface-variant font-data-mono uppercase">
             Showing Page {{ currentPage() }} of {{ totalPages() || 1 }}
@@ -100,44 +115,44 @@
     </section>
   </div>
 
-  <!-- Bottom Section: Movement History (Full Width) -->
+  <!-- Secció inferior: Historial de moviments (Ample complet) -->
   <section class="w-full">
     <div class="border border-outline-variant bg-white flex flex-col">
-      <div class="p-md border-b border-outline-variant flex flex-col md:flex-row justify-between items-center bg-surface-bright gap-md">
+      <div class="p-md border-b border-outline-variant flex flex-col lg:flex-row justify-between items-stretch lg:items-center bg-surface-bright gap-md">
         <span class="text-label-caps font-label-caps flex items-center gap-xs">
           <span class="material-symbols-outlined text-[16px]">history</span>
           Movement History
         </span>
         
-        <div class="flex items-center gap-md">
-          <!-- Tabs inside History -->
-          <div class="flex gap-xs bg-surface-container-low p-1 border border-outline-variant">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-sm sm:gap-md w-full lg:w-auto">
+          <!-- Pestanyes dins de l'historial -->
+          <div class="flex gap-xs bg-surface-container-low p-1 border border-outline-variant w-full sm:w-auto justify-center sm:justify-start overflow-x-auto">
             <button (click)="currentTab.set('GENERAL')" 
                     [class.bg-primary]="currentTab() === 'GENERAL'" 
                     [class.text-white]="currentTab() === 'GENERAL'"
                     [class.text-on-surface-variant]="currentTab() !== 'GENERAL'"
-                    class="px-sm py-1 text-[10px] font-label-caps transition-all">GENERAL</button>
+                    class="px-sm py-1 text-[10px] font-label-caps transition-all whitespace-nowrap">GENERAL</button>
             <button (click)="currentTab.set('PURCHASES')" 
                     [class.bg-primary]="currentTab() === 'PURCHASES'" 
                     [class.text-white]="currentTab() === 'PURCHASES'"
                     [class.text-on-surface-variant]="currentTab() !== 'PURCHASES'"
-                    class="px-sm py-1 text-[10px] font-label-caps transition-all">PURCHASES</button>
+                    class="px-sm py-1 text-[10px] font-label-caps transition-all whitespace-nowrap">PURCHASES</button>
             <button (click)="currentTab.set('SALES')" 
                     [class.bg-primary]="currentTab() === 'SALES'" 
                     [class.text-white]="currentTab() === 'SALES'"
                     [class.text-on-surface-variant]="currentTab() !== 'SALES'"
-                    class="px-sm py-1 text-[10px] font-label-caps transition-all">SALES</button>
+                    class="px-sm py-1 text-[10px] font-label-caps transition-all whitespace-nowrap">SALES</button>
           </div>
 
-          <div class="relative">
+          <div class="relative w-full sm:w-48">
             <span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px]">search</span>
             <input type="text" 
                    [ngModel]="historySearch()" 
                    (ngModelChange)="historySearch.set($event)"
                    placeholder="Search history..." 
-                   class="bg-surface-container-low border border-outline-variant pl-8 pr-md py-1 text-[10px] font-data-mono focus:ring-1 focus:ring-primary focus:border-primary outline-none uppercase w-48">
+                   class="bg-surface-container-low border border-outline-variant pl-8 pr-md py-1 text-[10px] font-data-mono focus:ring-1 focus:ring-primary focus:border-primary outline-none uppercase w-full">
           </div>
-          <span class="text-data-mono text-on-surface-variant uppercase text-[10px] font-bold">LATEST 10 RECORDS</span>
+          <span class="text-data-mono text-on-surface-variant uppercase text-[10px] font-bold text-center sm:text-left whitespace-nowrap">{{ filteredHistoryFull().length }} RECORDS TOTAL</span>
         </div>
       </div>
       <div class="overflow-x-auto">
@@ -150,29 +165,31 @@
                 </td>
               </tr>
             } @else {
-              <tr *ngFor="let op of filteredHistory()" class="border-b border-outline-variant hover:bg-surface-container-low transition-colors">
-                <td class="p-lg">
-                  <div class="flex items-center gap-lg">
-                    <div class="w-24 h-24 border border-outline-variant flex items-center justify-center shrink-0 bg-surface-container-lowest">
+              <tr *ngFor="let op of filteredHistory(); let i = index" 
+                  class="border-b border-outline-variant hover:bg-surface-container-low transition-colors duration-300 animate-slide-in-right"
+                  [style.animation-delay]="(0.05 * i) + 's'" style="animation-fill-mode: both;">
+                <td class="p-sm sm:p-lg">
+                  <div class="flex items-center gap-sm sm:gap-lg">
+                    <div class="w-16 h-16 sm:w-24 sm:h-24 border border-outline-variant flex items-center justify-center shrink-0 bg-surface-container-lowest">
                       <img *ngIf="op.user_item?.skin?.image_url" [src]="op.user_item?.skin?.image_url" class="w-full h-auto object-contain p-1">
-                      <span *ngIf="!op.user_item?.skin?.image_url" class="material-symbols-outlined text-[48px] text-on-surface-variant" [ngClass]="op.type.toUpperCase() === 'SELL' ? 'text-error' : 'text-primary'">
+                      <span *ngIf="!op.user_item?.skin?.image_url" class="material-symbols-outlined text-[32px] sm:text-[48px] text-on-surface-variant" [ngClass]="op.type.toUpperCase() === 'SELL' ? 'text-error' : 'text-primary'">
                         {{ op.type.toUpperCase() === 'SELL' ? 'arrow_outward' : 'add_circle' }}
                       </span>
                     </div>
                     <div>
-                      <p class="text-headline-sm font-bold tracking-tight text-on-surface">{{ op.user_item?.skin?.name }}</p>
-                      <p class="text-label-caps font-bold text-on-surface-variant mt-1 text-sm">{{ op.type.toUpperCase() === 'SELL' ? 'SALE' : 'PURCHASE' }} • {{ formatDate(op.created_at) }}</p>
+                      <p class="text-sm sm:text-base font-bold tracking-tight text-on-surface line-clamp-2 leading-tight">{{ op.user_item?.skin?.name }}</p>
+                      <p class="text-[10px] sm:text-xs font-bold text-on-surface-variant mt-1 uppercase">{{ op.type.toUpperCase() === 'SELL' ? 'SALE' : 'PURCHASE' }} • {{ formatDate(op.created_at) }}</p>
                     </div>
                   </div>
                 </td>
-                <td class="p-lg text-right">
-                  <p class="text-headline-sm font-data-mono font-bold text-on-surface">${{ op.amount | number:'1.2-2' }}</p>
+                <td class="p-sm sm:p-lg text-right whitespace-nowrap">
+                  <p class="text-sm sm:text-base font-data-mono font-bold text-on-surface">{{ currencyService.format(op.amount) }}</p>
                   @if (op.type.toUpperCase() === 'SELL') {
-                    <p class="text-sm font-bold uppercase mt-1" [ngClass]="(op.profit || 0) >= 0 ? 'text-primary' : 'text-error'">
-                      {{ (op.profit || 0) >= 0 ? '+' : '' }}${{ op.profit | number:'1.2-2' }} P/L
+                    <p class="text-[10px] sm:text-xs font-bold uppercase mt-1 whitespace-nowrap" [ngClass]="(op.profit || 0) >= 0 ? 'text-primary' : 'text-error'">
+                      {{ (op.profit || 0) >= 0 ? '+' : '' }}{{ currencyService.format(op.profit || 0) }} P/L
                     </p>
                   } @else {
-                    <p class="text-sm text-on-surface-variant font-bold uppercase mt-1">ORIGINAL ACQUISITION</p>
+                    <p class="text-[10px] sm:text-xs text-on-surface-variant font-bold uppercase mt-1">ORIGINAL ACQUISITION</p>
                   }
                 </td>
               </tr>
@@ -180,17 +197,35 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Controls de paginació de l'historial -->
+      <div class="p-md border-t border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+        <div class="text-[10px] text-on-surface-variant font-data-mono uppercase">
+          Showing Page {{ historyCurrentPage() }} of {{ historyTotalPages() || 1 }}
+        </div>
+        <div class="flex gap-xs">
+          <button (click)="historyCurrentPage.set(historyCurrentPage() - 1)" [disabled]="historyCurrentPage() === 1"
+                  class="material-symbols-outlined p-1 border border-outline-variant hover:bg-surface-container-low disabled:opacity-30 disabled:hover:bg-transparent transition-all active:scale-90">
+            chevron_left
+          </button>
+          <button (click)="historyCurrentPage.set(historyCurrentPage() + 1)" [disabled]="historyCurrentPage() >= historyTotalPages()"
+                  class="material-symbols-outlined p-1 border border-outline-variant hover:bg-surface-container-low disabled:opacity-30 disabled:hover:bg-transparent transition-all active:scale-90">
+            chevron_right
+          </button>
+        </div>
+      </div>
+
       <div class="p-md border-t border-outline-variant bg-surface-container-low">
         <div class="flex justify-between items-center">
           <span class="text-label-caps font-label-caps text-on-surface-variant">MONTHLY BALANCE</span>
           <span class="text-headline-sm font-bold" [ngClass]="monthlyBalance() >= 0 ? 'text-primary' : 'text-error'">
-            {{ monthlyBalance() >= 0 ? '+' : '-' }}${{ (monthlyBalance() < 0 ? -monthlyBalance() : monthlyBalance()) | number:'1.2-2' }}
+            {{ monthlyBalance() >= 0 ? '+' : '' }}{{ currencyService.format(monthlyBalance()) }}
           </span>
         </div>
       </div>
     </div>
   </section>
-  <!-- Transaction Modal -->
+  <!-- Modal de transacció -->
   <div *ngIf="transactionModal()" class="fixed inset-0 z-[100] flex items-center justify-center p-md">
     <div class="absolute inset-0 bg-on-surface/60 backdrop-blur-sm" (click)="closeTransaction()"></div>
     <div class="relative bg-white border border-outline-variant w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
@@ -219,18 +254,32 @@
         </div>
 
         <div class="space-y-sm">
+          <!-- Fila de deducció de la comissió de Steam -->
           <div class="flex justify-between items-end border-b border-outline-variant pb-1">
             <div class="flex flex-col">
-              <p class="text-[10px] text-on-surface-variant font-bold uppercase">Estimated Net Profit</p>
-              <p class="text-[9px] text-on-surface-variant opacity-70">AFTER 10% DMARKET FEE</p>
+              <p class="text-[10px] text-on-surface-variant font-bold uppercase">Steam Sale Fee</p>
+              <p class="text-[9px] text-on-surface-variant opacity-70">ESTIMATED 15% DEDUCTION</p>
             </div>
-            <p class="text-sm font-bold" [ngClass]="(customPrice() * 0.90 - (transactionModal()?.purchase_price || 0)) >= 0 ? 'text-primary' : 'text-error'">
-              {{ (customPrice() * 0.90 - (transactionModal()?.purchase_price || 0)) >= 0 ? '+' : '' }}${{ (customPrice() * 0.90 - (transactionModal()?.purchase_price || 0)) | number:'1.2-2' }}
+            <p class="text-sm font-bold text-error">
+              -{{ currencyService.format(customPrice() * 0.15) }}
             </p>
           </div>
-          <div class="flex justify-between items-end">
+
+          <!-- Fila de crèdit total (Net) -->
+          <div class="flex justify-between items-end border-b border-outline-variant pb-1">
             <p class="text-[10px] text-on-surface font-bold uppercase">Total Credit (Net)</p>
-            <p class="text-headline-sm font-bold text-on-surface">${{ (customPrice() * 0.90) | number:'1.2-2' }}</p>
+            <p class="text-sm font-bold text-on-surface">{{ currencyService.format(customPrice() * 0.85) }}</p>
+          </div>
+
+          <!-- Fila de benefici net estimat -->
+          <div class="flex justify-between items-end">
+            <div class="flex flex-col">
+              <p class="text-[10px] text-on-surface-variant font-bold uppercase">Estimated Net Profit</p>
+              <p class="text-[9px] text-on-surface-variant opacity-70">AFTER STEAM COMMISSION</p>
+            </div>
+            <p class="text-headline-sm font-bold" [ngClass]="(customPrice() * 0.85 - (transactionModal()?.purchase_price || 0)) >= 0 ? 'text-primary' : 'text-error'">
+              {{ (customPrice() * 0.85 - (transactionModal()?.purchase_price || 0)) >= 0 ? '+' : '' }}{{ currencyService.format(customPrice() * 0.85 - (transactionModal()?.purchase_price || 0)) }}
+            </p>
           </div>
         </div>
 

@@ -34,6 +34,7 @@ class AuthController extends Controller
             'email'         => $request->email,
             'password'      => Hash::make($request->password), // Xifratge de la contrasenya
             'profile_photo' => 'https://picsum.photos/200',    // Assignació d'imatge per defecte
+            'balance'       => 0.00,                           // Capital inicial zero
         ]);
 
         // Generació del token de sessió mitjançant Sanctum per a futures peticions autenticades

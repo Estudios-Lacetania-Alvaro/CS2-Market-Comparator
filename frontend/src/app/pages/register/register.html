@@ -1,4 +1,4 @@
-<main class="flex-grow flex items-center justify-center p-md">
+<main class="min-h-[80vh] flex items-center justify-center p-md">
   <div class="w-full max-w-[420px] bg-surface-container-low border border-outline-variant p-xl shadow-sm">
     <div class="mb-xl text-center">
       <div class="inline-flex items-center justify-center w-12 h-12 bg-primary-container mb-md">
@@ -9,7 +9,7 @@
     </div>
     
     <form (ngSubmit)="register()" class="space-y-lg">
-      <!-- Field: Full Name -->
+      <!-- Camp: Nom complet -->
       <div class="space-y-base">
         <label class="font-label-caps text-label-caps text-on-surface-variant uppercase flex justify-between">
           <span>Full Name</span>
@@ -19,7 +19,7 @@
                placeholder="GABRIEL 'FALLEN' TOLEDO" type="text" name="name" [(ngModel)]="name" required />
       </div>
       
-      <!-- Field: Email Address -->
+      <!-- Camp: Adreça de correu electrònic -->
       <div class="space-y-base">
         <label class="font-label-caps text-label-caps text-on-surface-variant uppercase flex justify-between">
           <span>Email Address</span>
@@ -29,7 +29,7 @@
                placeholder="ANALYTICS@DOMAIN.COM" type="email" name="email" [(ngModel)]="email" required />
       </div>
       
-      <!-- Field: Password -->
+      <!-- Camp: Contrasenya -->
       <div class="space-y-base">
         <label class="font-label-caps text-label-caps text-on-surface-variant uppercase flex justify-between">
           <span>Password</span>
@@ -39,7 +39,7 @@
                placeholder="••••••••" type="password" name="password" [(ngModel)]="password" required />
       </div>
       
-      <!-- Field: Confirm Password -->
+      <!-- Camp: Confirmar contrasenya -->
       <div class="space-y-base">
         <label class="font-label-caps text-label-caps text-on-surface-variant uppercase flex justify-between">
           <span>Confirm Password</span>
@@ -49,13 +49,13 @@
                placeholder="••••••••" type="password" name="password_confirmation" [(ngModel)]="password_confirmation" required />
       </div>
       
-      <!-- Action Button -->
+      <!-- Botó d'acció -->
       <button class="w-full h-14 bg-primary-container text-on-primary-fixed font-headline-md text-headline-md tracking-tighter border border-outline active:scale-[0.98] transition-transform hover:brightness-105" type="submit">
         EXECUTE REGISTRATION
       </button>
     </form>
     
-    <!-- Bottom Link -->
+    <!-- Enllaç inferior -->
     <div class="mt-xl text-center">
       <p class="text-body-base text-on-surface-variant">
         Existing operative? 
@@ -63,7 +63,7 @@
       </p>
     </div>
     
-    <!-- Terminal Decal -->
+    <!-- Calcomania del terminal -->
     <div class="mt-lg pt-md border-t border-outline-variant flex justify-between items-center opacity-40">
       <span class="text-label-caps font-label-caps">STATUS: WAITING_INPUT</span>
       <span class="text-label-caps font-label-caps">SEC_AUTH: 0%</span>
