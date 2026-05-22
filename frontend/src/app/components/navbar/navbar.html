@@ -1,0 +1,143 @@
+<header
+  class="bg-surface/80 backdrop-blur-md border-b border-outline-variant docked full-width top-0 z-50 sticky transition-all duration-300">
+  <div class="flex justify-between items-center w-full px-md md:px-lg h-14 max-w-full">
+    <div class="flex items-center gap-md">
+      <!-- Logotip oficial a l'esquerra del tot i títol de l'aplicació -->
+      <div class="flex items-center gap-sm cursor-pointer" routerLink="/home">
+        <img src="/logo.png" alt="CS:ANALYTICS Logo"
+          class="w-10 h-10 rounded-full border border-primary object-cover hover:scale-105 transition-transform duration-200">
+        <span class="text-headline-md font-headline-md font-bold text-on-surface tracking-tighter">CS:ANALYTICS</span>
+      </div>
+      <nav class="hidden md:flex gap-sm">
+        <a class="pb-1 text-[16px] font-label-caps transition-colors duration-150 active:scale-[0.98]"
+          routerLink="/home" routerLinkActive="text-primary border-b-2 border-primary"
+          [routerLinkActiveOptions]="{exact: true}"
+          [class]="router.url === '/home' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant font-medium hover:bg-surface-container-low'">Home</a>
+        <a class="pb-1 text-[16px] font-label-caps transition-colors duration-150 active:scale-[0.98]"
+          routerLink="/market" routerLinkActive="text-primary border-b-2 border-primary"
+          [class]="router.url === '/market' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant font-medium hover:bg-surface-container-low'">Market</a>
+        <a class="pb-1 text-[16px] font-label-caps transition-colors duration-150 active:scale-[0.98]"
+          routerLink="/inventory" routerLinkActive="text-primary border-b-2 border-primary"
+          [class]="router.url === '/inventory' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant font-medium hover:bg-surface-container-low'">Inventory</a>
+        <a class="pb-1 text-[16px] font-label-caps transition-colors duration-150 active:scale-[0.98]"
+          routerLink="/charts" routerLinkActive="text-primary border-b-2 border-primary"
+          [class]="router.url === '/charts' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant font-medium hover:bg-surface-container-low'">Charts</a>
+      </nav>
+
+      <!-- Botó del menú mòbil -->
+      <button (click)="toggleMobileMenu()"
+        class="flex md:hidden text-on-surface-variant hover:text-primary transition-colors">
+        <span class="material-symbols-outlined text-[28px]">{{ isMobileMenuOpen() ? 'close' : 'menu' }}</span>
+      </button>
+    </div>
+
+    <div class="flex items-center h-full">
+      @if (isLoggedIn) {
+      <div class="flex items-center gap-md h-full">
+        <div class="hidden sm:flex flex-col text-right justify-center">
+          <span
+            class="block text-[9px] text-on-surface-variant font-label-caps leading-none opacity-70 uppercase mb-1">BALANCE</span>
+          <span class="text-primary font-data-mono font-bold leading-none">{{ currencyService.format(user().balance)
+            }}</span>
+        </div>
+
+        <!-- Contenidor del menú desplegable -->
+        <div class="relative group h-full flex items-center ml-sm">
+          <button
+            class="flex items-center gap-2 hover:bg-surface-container-low px-sm py-1 border border-transparent hover:border-outline-variant transition-all rounded-DEFAULT">
+            @if (user()?.profile_photo) {
+            <img [src]="user().profile_photo" alt="User"
+              class="w-7 h-7 rounded-full border border-primary object-cover">
+            } @else {
+            <span class="material-symbols-outlined text-[28px] text-primary">account_circle</span>
+            }
+            <span class="text-label-caps font-bold text-on-surface uppercase hidden sm:inline">{{ user().name }}</span>
+            <span
+              class="material-symbols-outlined text-on-surface-variant text-[18px] group-hover:rotate-180 transition-transform">expand_more</span>
+          </button>
+
+          <!-- Menú desplegable -->
+          <div
+            class="absolute right-0 top-full mt-0 w-60 bg-surface-container-low border border-outline-variant shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-1 group-hover:translate-y-0 transition-all duration-150 z-[100]">
+            <div class="p-md border-b border-outline-variant bg-surface-container">
+              <span class="text-[9px] font-label-caps text-on-surface-variant block mb-1">LOGGED AS</span>
+              <span class="text-body-base font-bold text-on-surface truncate block">{{ user().email }}</span>
+            </div>
+
+            <div class="flex flex-col py-xs">
+              <a routerLink="/profile"
+                class="flex items-center gap-sm px-md py-sm text-label-caps font-label-caps text-on-surface hover:bg-primary hover:text-on-primary transition-colors cursor-pointer">
+                <span class="material-symbols-outlined text-[18px]">person</span>
+                PROFILE_TERMINAL
+              </a>
+
+              <div class="h-px bg-outline-variant w-[90%] mx-auto my-xs"></div>
+
+              <button (click)="logout($event)"
+                class="flex items-center gap-sm px-md py-sm text-label-caps font-label-caps text-error hover:bg-error hover:text-on-error transition-colors cursor-pointer w-full text-left">
+                <span class="material-symbols-outlined text-[18px]">logout</span>
+                SECURE_LOGOUT
+              </button>
+            </div>
+
+            <!-- Decoració del peu de pàgina -->
+            <div
+              class="px-md py-xs bg-surface border-t border-outline-variant text-[9px] text-on-surface-variant font-data-mono flex justify-between opacity-50 uppercase">
+              <span>SEC_AUTH: 100%</span>
+              <span>V2.4.1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      } @else {
+      <div class="flex items-center gap-sm">
+        <button
+          class="text-on-surface-variant font-medium text-label-caps font-label-caps hover:bg-surface-container-low transition-colors duration-150 active:scale-[0.98] px-sm py-xs border border-transparent"
+          routerLink="/login">Login</button>
+        <button
+          class="bg-primary text-on-primary text-label-caps font-label-caps px-sm py-xs hover:bg-on-primary-fixed-variant transition-colors duration-150 active:scale-[0.98] border border-primary rounded-DEFAULT"
+          routerLink="/register">Register</button>
+      </div>
+      }
+    </div>
+  </div>
+</header>
+
+<!-- Superposició de navegació mòbil -->
+<div *ngIf="isMobileMenuOpen()"
+  class="fixed inset-0 z-[49] bg-black/60 backdrop-blur-sm md:hidden animate-in fade-in duration-200"
+  (click)="isMobileMenuOpen.set(false)">
+  <div
+    class="absolute top-14 left-0 right-0 bg-surface border-b border-outline-variant p-md flex flex-col gap-sm animate-in slide-in-from-top duration-300"
+    (click)="$event.stopPropagation()">
+    <a routerLink="/home" (click)="isMobileMenuOpen.set(false)"
+      class="p-sm text-label-caps font-bold hover:bg-surface-container-low transition-colors flex items-center justify-between border border-transparent hover:border-outline-variant">
+      HOME <span class="material-symbols-outlined text-primary">home</span>
+    </a>
+    <a routerLink="/market" (click)="isMobileMenuOpen.set(false)"
+      class="p-sm text-label-caps font-bold hover:bg-surface-container-low transition-colors flex items-center justify-between border border-transparent hover:border-outline-variant">
+      MARKET <span class="material-symbols-outlined text-primary">shopping_cart</span>
+    </a>
+    <a routerLink="/inventory" (click)="isMobileMenuOpen.set(false)"
+      class="p-sm text-label-caps font-bold hover:bg-surface-container-low transition-colors flex items-center justify-between border border-transparent hover:border-outline-variant">
+      INVENTORY <span class="material-symbols-outlined text-primary">inventory_2</span>
+    </a>
+    <a routerLink="/charts" (click)="isMobileMenuOpen.set(false)"
+      class="p-sm text-label-caps font-bold hover:bg-surface-container-low transition-colors flex items-center justify-between border border-transparent hover:border-outline-variant">
+      CHARTS <span class="material-symbols-outlined text-primary">monitoring</span>
+    </a>
+
+    @if (isLoggedIn) {
+    <div class="mt-md pt-md border-t border-outline-variant flex flex-col gap-sm">
+      <div class="flex justify-between items-center px-sm">
+        <span class="text-[9px] font-label-caps text-on-surface-variant uppercase">MY TERMINAL</span>
+        <span class="text-primary font-data-mono font-bold">{{ currencyService.format(user().balance) }}</span>
+      </div>
+      <a routerLink="/profile" (click)="isMobileMenuOpen.set(false)"
+        class="p-sm text-label-caps font-bold hover:bg-primary hover:text-on-primary transition-colors flex items-center justify-between border border-outline-variant">
+        PROFILE SETTINGS <span class="material-symbols-outlined">settings</span>
+      </a>
+    </div>
+    }
+  </div>
+</div>

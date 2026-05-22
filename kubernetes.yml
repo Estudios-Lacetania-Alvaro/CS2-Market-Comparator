@@ -1,0 +1,254 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc-v2
+  namespace: grup7
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: csgo-secrets
+  namespace: grup7
+type: Opaque
+stringData:
+  db-password: "admin123"
+  db-name: "csgo_market"
+  app-key: "base64:o478/6t1UKR485H6ZpKDnYvwnjln6A7Uh9pEigGvHkk="
+  gemini-key: "AIzaSyDEiP73bo7JBhz1TUxysziH0tEefc7QCg4"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: grup7
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mariadb:10.11
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: csgo-secrets
+                  key: db-password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: csgo-secrets
+                  key: db-name
+          ports:
+            - containerPort: 3306
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: mysql-pvc-v2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  namespace: grup7
+spec:
+  selector:
+    app: mysql
+  ports:
+    - port: 3306
+      targetPort: 3306
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: csgo-backend
+  namespace: grup7
+spec:
+  selector:
+    matchLabels:
+      app: csgo-backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: csgo-backend
+    spec:
+      imagePullSecrets:
+        - name: credencials-kube0
+      containers:
+        - name: backend
+          image: kube0.lacetania.cat/grup7/backend:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              (while [ true ]; do php artisan schedule:run --no-interaction; sleep 60; done) &
+              apache2-foreground
+          env:
+            - name: DB_CONNECTION
+              value: mysql
+            - name: DB_HOST
+              value: mysql-service
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: csgo-secrets
+                  key: db-name
+            - name: DB_USERNAME
+              value: root
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: csgo-secrets
+                  key: db-password
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: csgo-secrets
+                  key: app-key
+            - name: APP_ENV
+              value: production
+            - name: APP_DEBUG
+              value: "false"
+            - name: APP_URL
+              value: "http://grup7.infla.cat"
+            - name: FRONTEND_URL
+              value: "http://grup7.infla.cat"
+            - name: SANCTUM_STATEFUL_DOMAINS
+              value: "grup7.infla.cat"
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: csgo-secrets
+                  key: gemini-key
+            - name: STEAM_PROXY
+              value: "http://tor-proxy-service:8118"
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: grup7
+spec:
+  selector:
+    app: csgo-backend
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: csgo-frontend
+  namespace: grup7
+spec:
+  selector:
+    matchLabels:
+      app: csgo-frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: csgo-frontend
+    spec:
+      imagePullSecrets:
+        - name: credencials-kube0
+      containers:
+        - name: frontend
+          image: kube0.lacetania.cat/grup7/frontend:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "300m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: grup7
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.7.101
+  selector:
+    app: csgo-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tor-proxy
+  namespace: grup7
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tor-proxy
+  template:
+    metadata:
+      labels:
+        app: tor-proxy
+    spec:
+      containers:
+        - name: tor
+          image: dperson/torproxy:latest
+          ports:
+            - containerPort: 8118
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tor-proxy-service
+  namespace: grup7
+spec:
+  selector:
+    app: tor-proxy
+  ports:
+    - port: 8118
+      targetPort: 8118

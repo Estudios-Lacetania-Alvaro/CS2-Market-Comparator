@@ -1,0 +1,112 @@
+<div class="min-h-screen bg-surface px-xl py-lg space-y-md">
+  <!-- Capçalera / Navegació -->
+  <div class="flex items-center gap-md">
+    <a routerLink="/market"
+      class="flex items-center gap-[2px] text-on-surface-variant hover:text-on-surface transition-colors font-bold uppercase text-[10px]">
+      <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+      Back to Market
+    </a>
+  </div>
+
+  <!-- Contingut principal -->
+  @if (loading()) {
+    <div class="flex flex-col items-center justify-center py-20 gap-md">
+      <app-loading-spinner />
+    </div>
+  } @else if (skin()) {
+    <main class="grid grid-cols-12 gap-6">
+      
+      <!-- Panell esquerre: Resum de l'actiu -->
+      <section class="col-span-12 lg:col-span-4 flex flex-col">
+        <!-- Contenidor de la imatge de l'actiu -->
+        <div class="bg-[#e8f2e1] border border-[#1e293b] p-8 flex items-center justify-center min-h-[450px]">
+          <img [src]="skin().image" [alt]="skin().name" class="max-w-full h-auto drop-shadow-2xl hover:scale-105 transition-transform duration-500"/>
+        </div>
+        
+        <!-- Contenidor de detalls de l'actiu -->
+        <div class="bg-white border border-[#1e293b] border-t-0 p-6 flex-grow flex flex-col justify-center">
+          <h1 class="text-lg font-bold text-center mb-6 uppercase tracking-tight">{{ skin().name }}</h1>
+          
+          <div class="grid grid-cols-2 divide-x divide-slate-200 border border-slate-200">
+            <div class="p-4 text-center">
+              <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 block mb-1">Steam Market</span>
+              <span class="text-xl font-bold text-slate-800">{{ currencyService.format(skin().steam_price) }}</span>
+            </div>
+            <div class="p-4 text-center">
+              <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 block mb-1">DMarket Lowest</span>
+              <span class="text-xl font-bold text-[#22c55e]">{{ currencyService.format(skin().dmarket_price) }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panell dret: Anàlisi i dades -->
+      <div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+        
+        <!-- Secció de gràfics de l'evolució dels preus -->
+        <section class="bg-[#e8f2e1] border border-[#1e293b] p-6 flex flex-col">
+          <div class="flex justify-between items-center mb-8">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-slate-700">timeline</span>
+              <h2 class="text-[10px] font-bold uppercase tracking-widest text-slate-800">Price Evolution</h2>
+            </div>
+            
+            <!-- Llegenda personalitzada -->
+            <div class="flex gap-4">
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-3 border-2 border-[#4b91e2] bg-[#4b91e2]/20"></span>
+                <span class="text-[9px] font-bold uppercase">Steam</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-3 border-2 border-[#22c55e] bg-[#22c55e]/20"></span>
+                <span class="text-[9px] font-bold uppercase">DMarket</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative h-[450px] w-full">
+            <canvas #priceChart></canvas>
+            @if (skin().historical_data.length === 0) {
+              <div class="absolute inset-0 flex items-center justify-center bg-white/20 backdrop-blur-[1px]">
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600">Insufficient Data for Charting</p>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- Secció de comissions de la plataforma -->
+        <section class="bg-white border border-[#1e293b] p-6">
+          <div class="flex items-center gap-2 mb-6">
+            <span class="material-symbols-outlined text-slate-700">payments</span>
+            <h2 class="text-[10px] font-bold uppercase tracking-widest text-slate-800">Platform Commissions Analysis</h2>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x divide-slate-200">
+            <!-- Comissió de Steam -->
+            <div class="flex justify-between items-center pt-4 md:pt-0">
+              <div>
+                <p class="font-bold text-sm uppercase">Steam Sale Fee</p>
+                <p class="text-[10px] text-slate-500 uppercase tracking-tighter">ESTIMATED 15% DEDUCTION</p>
+              </div>
+              <div class="text-right">
+                <span class="text-lg font-bold text-[#ef4444]">-{{ currencyService.format(skin().fees.steam_fee) }}</span>
+              </div>
+            </div>
+            
+            <!-- Comissió de DMarket -->
+            <div class="flex justify-between items-center pt-4 md:pt-0 md:pl-8">
+              <div>
+                <p class="font-bold text-sm uppercase">DMarket Sale Fee</p>
+                <p class="text-[10px] text-slate-500 uppercase tracking-tighter">ESTIMATED 2% DEDUCTION</p>
+              </div>
+              <div class="text-right">
+                <span class="text-lg font-bold text-[#ef4444]">-{{ currencyService.format(skin().fees.dmarket_fee) }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </main>
+  }
+</div>

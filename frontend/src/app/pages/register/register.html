@@ -1,0 +1,80 @@
+<main class="min-h-[80vh] flex items-center justify-center p-md">
+  <div class="w-full max-w-[420px] bg-surface-container-low border border-outline-variant p-xl shadow-sm">
+    <div class="mb-xl text-center">
+      <div class="inline-flex items-center justify-center w-12 h-12 bg-primary-container mb-md">
+        <span class="material-symbols-outlined text-on-primary-container" data-icon="terminal">terminal</span>
+      </div>
+      <h1 class="font-headline-md text-headline-md text-on-surface mb-xs uppercase">INITIALIZE ACCOUNT</h1>
+      <p class="font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase">Protocol:
+        Registration.v2</p>
+    </div>
+
+    <form (ngSubmit)="register()" class="space-y-lg">
+      <!-- Camp: Nom complet -->
+      <div class="space-y-base">
+        <label class="font-label-caps text-label-caps text-on-surface-variant uppercase flex justify-between">
+          <span>Full Name</span>
+          <span class="text-primary opacity-60">REQUIRED</span>
+        </label>
+        <input
+          class="w-full h-12 px-md bg-surface border border-outline text-body-base focus:ring-0 focus:border-outline focus:border-b-primary-container focus:border-b-2 transition-all outline-none"
+          placeholder="GABRIEL 'FALLEN' TOLEDO" type="text" name="name" [(ngModel)]="name" required />
+      </div>
+
+      <!-- Camp: Adreça de correu electrònic -->
+      <div class="space-y-base">
+        <label class="font-label-caps text-label-caps text-on-surface-variant uppercase flex justify-between">
+          <span>Email Address</span>
+          <span class="text-primary opacity-60">ID_SOURCE</span>
+        </label>
+        <input
+          class="w-full h-12 px-md bg-surface border border-outline text-body-base focus:ring-0 focus:border-outline focus:border-b-primary-container focus:border-b-2 transition-all outline-none"
+          placeholder="ANALYTICS@DOMAIN.COM" type="email" name="email" [(ngModel)]="email" required />
+      </div>
+
+      <!-- Camp: Contrasenya -->
+      <div class="space-y-base">
+        <label class="font-label-caps text-label-caps text-on-surface-variant uppercase flex justify-between">
+          <span>Password</span>
+          <span class="text-primary opacity-60">ENCRYPTED</span>
+        </label>
+        <input
+          class="w-full h-12 px-md bg-surface border border-outline text-body-base focus:ring-0 focus:border-outline focus:border-b-primary-container focus:border-b-2 transition-all outline-none"
+          placeholder="••••••••" type="password" name="password" [(ngModel)]="password" required />
+      </div>
+
+      <!-- Camp: Confirmar contrasenya -->
+      <div class="space-y-base">
+        <label class="font-label-caps text-label-caps text-on-surface-variant uppercase flex justify-between">
+          <span>Confirm Password</span>
+          <span class="text-primary opacity-60">VALIDATION</span>
+        </label>
+        <input
+          class="w-full h-12 px-md bg-surface border border-outline text-body-base focus:ring-0 focus:border-outline focus:border-b-primary-container focus:border-b-2 transition-all outline-none"
+          placeholder="••••••••" type="password" name="password_confirmation" [(ngModel)]="password_confirmation"
+          required />
+      </div>
+
+      <!-- Botó d'acció -->
+      <button
+        class="w-full h-14 bg-primary-container text-on-primary-fixed font-headline-md text-headline-md tracking-tighter border border-outline active:scale-[0.98] transition-transform hover:brightness-105"
+        type="submit">
+        EXECUTE REGISTRATION
+      </button>
+    </form>
+
+    <!-- Enllaç inferior -->
+    <div class="mt-xl text-center">
+      <p class="text-body-base text-on-surface-variant">
+        Existing operative?
+        <a class="text-primary font-bold hover:underline cursor-pointer" routerLink="/login">Login</a>
+      </p>
+    </div>
+
+    <!-- Calcomania del terminal -->
+    <div class="mt-lg pt-md border-t border-outline-variant flex justify-between items-center opacity-40">
+      <span class="text-label-caps font-label-caps">STATUS: WAITING_INPUT</span>
+      <span class="text-label-caps font-label-caps">SEC_AUTH: 0%</span>
+    </div>
+  </div>
+</main>

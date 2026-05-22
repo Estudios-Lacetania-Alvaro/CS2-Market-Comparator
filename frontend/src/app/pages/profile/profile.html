@@ -1,0 +1,128 @@
+<main class="flex-grow flex flex-col items-center py-xl px-lg animate-fade-in">
+  <div class="w-full max-w-7xl flex flex-col gap-lg">
+    <!-- Capçalera de la pàgina -->
+    <div class="flex flex-col gap-base pb-sm border-b border-outline-variant">
+      <h1 class="text-headline-md font-headline-md text-on-surface">Account Management</h1>
+    </div>
+
+    <!-- Disseny de quadrícula Bento -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter bg-outline-variant border border-outline-variant">
+      <!-- Targeta d'informació personal -->
+      <div class="bg-surface-container-lowest p-lg col-span-1 md:col-span-2 flex flex-col gap-md relative group hover:bg-surface-container-low transition-all duration-300 hover:shadow-md hover:-translate-y-1 animate-slide-up" style="animation-delay: 0.1s; animation-fill-mode: both;">
+        <div class="absolute top-md right-md text-on-surface-variant opacity-50">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+        <div class="flex items-start gap-md">
+          <div class="relative w-24 h-24 rounded-DEFAULT overflow-hidden border border-outline-variant">
+            <img [src]="profileImage()" alt="User Profile Image" class="w-full h-full object-cover" />
+            <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;" accept="image/*">
+          </div>
+          <div class="flex flex-col gap-base pt-xs">
+            <h2 class="text-headline-md font-headline-md text-on-surface uppercase">{{ user().name }}</h2>
+            <span class="text-data-mono font-data-mono text-on-surface-variant">ID: {{ user().id || 'AUTHENTICATED_USER' }}</span>
+            <button (click)="fileInput.click()" class="mt-base text-label-caps font-label-caps text-primary hover:underline flex items-center gap-xs">
+              <span class="material-symbols-outlined text-[14px]">add_a_photo</span> CHANGE PROFILE PICTURE
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-col gap-sm mt-sm">
+          <div class="flex flex-col gap-base">
+            <label class="text-label-caps font-label-caps text-on-surface-variant">Email Address</label>
+            <div class="border border-outline-variant bg-surface px-sm py-xs text-data-mono font-data-mono text-on-surface flex justify-between items-center">
+              <span>{{ user().email }}</span>
+              <span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-base">
+            <label class="text-label-caps font-label-caps text-on-surface-variant">Account Status</label>
+            <div class="border border-outline-variant bg-surface px-sm py-xs text-data-mono font-data-mono flex items-center gap-xs">
+              <div class="w-2 h-2 bg-primary rounded-full"></div>
+              <span class="text-on-surface uppercase">Active / Verified Terminal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Targeta de configuració financera -->
+      <div class="bg-surface-container-lowest p-lg col-span-1 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-300 hover:shadow-md hover:-translate-y-1 animate-slide-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
+        <div class="flex flex-col gap-md">
+          <div class="flex justify-between items-center border-b border-outline-variant pb-xs">
+            <span class="text-label-caps font-label-caps text-on-surface-variant uppercase">FINANCIAL SETTINGS</span>
+            <span class="material-symbols-outlined text-on-surface-variant text-[18px]">account_balance_wallet</span>
+          </div>
+          
+          <div class="flex flex-col gap-base mt-xs">
+            <span class="text-data-mono font-data-mono text-on-surface-variant uppercase">Available Balance</span>
+            <span class="text-headline-md font-headline-md text-on-surface tracking-tighter">{{ currencyService.format(user().balance) }}</span>
+          </div>
+
+          <!-- Selecció de divisa -->
+          <div class="flex flex-col gap-base border-t border-outline-variant pt-sm mt-sm">
+            <span class="text-label-caps font-label-caps text-on-surface-variant mb-xs">Currency Preference</span>
+            <div class="flex gap-sm">
+              <button (click)="changeCurrency('USD')" 
+                      [class.bg-primary]="currencyService.selectedCurrency() === 'USD'"
+                      [class.text-on-primary]="currencyService.selectedCurrency() === 'USD'"
+                      [class.bg-surface]="currencyService.selectedCurrency() !== 'USD'"
+                      class="flex-1 border border-outline-variant py-xs px-1 text-[10px] font-label-caps hover:bg-surface-container-high transition-colors uppercase text-center">
+                DOLLARS (USD)
+              </button>
+              <button (click)="changeCurrency('EUR')" 
+                      [class.bg-primary]="currencyService.selectedCurrency() === 'EUR'"
+                      [class.text-on-primary]="currencyService.selectedCurrency() === 'EUR'"
+                      [class.bg-surface]="currencyService.selectedCurrency() !== 'EUR'"
+                      class="flex-1 border border-outline-variant py-xs px-1 text-[10px] font-label-caps hover:bg-surface-container-high transition-colors uppercase text-center">
+                EUROS (EUR)
+              </button>
+            </div>
+            <p class="text-[9px] text-on-surface-variant italic mt-1 leading-tight">
+              * Currency conversion applies globally.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secció de configuració del compte -->
+      <div class="bg-surface-container-lowest p-lg col-span-1 md:col-span-3 border-t border-outline-variant animate-slide-up" style="animation-delay: 0.3s; animation-fill-mode: both;">
+        <div class="flex flex-col gap-lg">
+          <div>
+            <span class="text-label-caps font-label-caps text-on-surface-variant block mb-md uppercase">ACCOUNT SETTINGS</span>
+            <form (ngSubmit)="saveProfile()" class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+              <!-- Editar nom complet -->
+              <div class="flex flex-col gap-base">
+                <label class="text-label-caps font-label-caps text-on-surface-variant">Full Name</label>
+                <input class="bg-surface border border-outline-variant px-sm py-xs text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all uppercase" 
+                       type="text" name="name" [(ngModel)]="user().name" required />
+              </div>
+              <!-- Editar adreça de correu electrònic -->
+              <div class="flex flex-col gap-base">
+                <label class="text-label-caps font-label-caps text-on-surface-variant">Email Address</label>
+                <input class="bg-surface border border-outline-variant px-sm py-xs text-data-mono font-data-mono text-on-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" 
+                       type="email" name="email" [(ngModel)]="user().email" required />
+              </div>
+              <div class="md:col-span-2">
+                <button type="submit" class="bg-primary text-on-primary px-lg py-xs text-label-caps font-label-caps hover:bg-primary-container hover:text-on-primary-container transition-colors uppercase">
+                  SAVE CHANGES
+                </button>
+              </div>
+            </form>
+          </div>
+
+
+        </div>
+      </div>
+
+      <!-- Targeta de seguretat de la sessió -->
+      <div class="bg-surface-container-lowest p-lg col-span-1 md:col-span-3 flex flex-col sm:flex-row justify-between items-center gap-md">
+        <div class="flex flex-col gap-base">
+          <span class="text-label-caps font-label-caps text-on-surface-variant uppercase">SESSION SECURITY</span>
+          <span class="text-body-base font-body-base text-on-surface">Manage your active sessions and secure your account.</span>
+        </div>
+        <button (click)="logout()" class="px-lg py-sm bg-error text-on-error border border-error hover:bg-error-container hover:text-on-error-container transition-colors text-label-caps font-label-caps flex items-center gap-xs w-full sm:w-auto justify-center uppercase">
+          <span class="material-symbols-outlined text-[18px]">logout</span>
+          SECURE LOGOUT
+        </button>
+      </div>
+    </div>
+  </div>
+</main>

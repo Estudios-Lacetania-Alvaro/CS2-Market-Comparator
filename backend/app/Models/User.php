@@ -7,11 +7,12 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'profile_photo',
+        'balance',
     ];
 
     /**
@@ -45,5 +48,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relació: Un usuari té molts ítems a la seva propietat (Inventari).
+     */
+    public function items()
+    {
+        return $this->hasMany(UserItem::class);
+    }
+
+    /**
+     * Relació: Un usuari té un historial de moltes operacions.
+     */
+    public function operations()
+    {
+        return $this->hasMany(Operation::class);
     }
 }
