@@ -26,7 +26,7 @@ class AiService
         // Si l'inventari està buit, retornem l'estructura neta per al frontend
         if ($items->isEmpty()) {
             return [
-                'general_analysis' => "El teu portafoli actualment està buit. Registra noves compres per rebre recomanacions basades en intel·ligència artificial.",
+                'general_analysis' => "Your portfolio is currently empty. Register new purchases to receive recommendations based on artificial intelligence.",
                 'recommendations'  => []
             ];
         }
@@ -46,19 +46,19 @@ class AiService
         })->toArray();
 
         // 3. Prompt estricte: demanem un format JSON pla sense caràcters estranys
-        $prompt = "Ets un analista financer expert en el mercat d'actius digitals de Counter-Strike 2.
-Analitza el següent portafoli d'un usuari i genera recomanacions estratègiques.
-Dades del portafoli en viu: " . json_encode($portfolioData) . "
+        $prompt = "You are an expert financial analyst in the Counter-Strike 2 digital asset market.
+Analyze the following user portfolio and generate strategic recommendations.
+Live portfolio data: " . json_encode($portfolioData) . "
 
-Has de respondre NOMÉS amb un objecte JSON pla. L'estructura ha de ser EXACTAMENT aquesta:
+You MUST respond ONLY with a flat JSON object. All contents and analysis must be written in English. The structure must be EXACTLY like this:
 {
-\"general_analysis\": \"Anàlisi global de salut del portafoli en 2 o 3 línies.\",
+\"general_analysis\": \"Global health analysis of the portfolio in 2 or 3 lines.\",
 \"recommendations\": [
 {
 \"inventory_id\": 1,
-\"skin_name\": \"Nom de l'arma\",
+\"skin_name\": \"Name of the skin\",
 \"action\": \"sell\",
-\"reason\": \"Raonament concís i expert de l'operació suggerida.\"
+\"reason\": \"Concise and expert reasoning for the suggested operation.\"
 }
 ]
 }";
@@ -85,13 +85,13 @@ Has de respondre NOMÉS amb un objecte JSON pla. L'estructura ha de ser EXACTAME
             // Si l'error és de quota o clau d'API, informem clarament
             if ($response->status() === 429) {
                 return [
-                    'general_analysis' => "Quota de l'API de Gemini esgotada. Torna-ho a intentar en un minut.",
+                    'general_analysis' => "Gemini API quota exceeded. Please try again in a minute.",
                     'recommendations'  => []
                 ];
             }
 
             return [
-                'general_analysis' => "Error de connexió amb el motor d'IA. Verifica la teva clau de API o la connexió a internet.",
+                'general_analysis' => "Connection error with the AI engine. Please verify your API key or internet connection.",
                 'recommendations'  => []
             ];
         }
@@ -103,7 +103,7 @@ Has de respondre NOMÉS amb un objecte JSON pla. L'estructura ha de ser EXACTAME
         if (!isset($data['candidates'][0]['content']['parts'][0]['text'])) {
             Log::warning("Gemini ha retornat una resposta buida o bloquejada: " . json_encode($data));
             return [
-                'general_analysis' => "El motor d'IA ha bloquejat la resposta per motius de seguretat o falta de dades. Prova a afegir armes al teu inventari.",
+                'general_analysis' => "The AI engine blocked the response due to safety reasons or lack of data. Try adding skins to your inventory.",
                 'recommendations'  => []
             ];
         }
@@ -117,7 +117,7 @@ Has de respondre NOMÉS amb un objecte JSON pla. L'estructura ha de ser EXACTAME
         if (!$result) {
             Log::error("Error parsejant el JSON de Gemini. Resposta original: " . $jsonString);
             return [
-                'general_analysis' => "L'IA ha generat un format de dades invàlid. Prova de nou en uns segons.",
+                'general_analysis' => "The AI generated an invalid data format. Please try again in a few seconds.",
                 'recommendations'  => []
             ];
         }
