@@ -18,9 +18,9 @@ metadata:
   namespace: grup7
 type: Opaque
 stringData:
-  db-password: "admin123"
-  db-name: "csgo_market"
-  app-key: "base64:o478/6t1UKR485H6ZpKDnYvwnjln6A7Uh9pEigGvHkk="
+  db-password: "."
+  db-name: "."
+  app-key: "."
   gemini-key: "."
 ---
 apiVersion: apps/v1
